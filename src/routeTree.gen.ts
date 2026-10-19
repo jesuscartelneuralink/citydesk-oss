@@ -12,14 +12,23 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BlockRouteImport } from './routes/block'
+import { Route as JoinRouteImport } from './routes/join'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as DotwellKnownAgentCardDotjsonRouteImport } from './routes/[.]well-known.agent-card[.]json'
+import { Route as DotwellKnownAgentDotjsonRouteImport } from './routes/[.]well-known.agent[.]json'
 import { Route as AccountSessionsRouteImport } from './routes/account.sessions'
 import { Route as AdminSessionsRouteImport } from './routes/admin_.sessions'
 import { Route as ApiAssistantRouteImport } from './routes/api/assistant'
 import { Route as ApiScansRouteImport } from './routes/api/scans'
 import { Route as ApiTripRouteRouteImport } from './routes/api/trip-route'
+import { Route as JoinCreedDotjsonRouteImport } from './routes/join_.creed[.]json'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiColonyChallengeRouteImport } from './routes/api/colony/challenge'
+import { Route as ApiColonyJoinRouteImport } from './routes/api/colony/join'
+import { Route as ApiColonyMeRouteImport } from './routes/api/colony/me'
+import { Route as ApiColonyProposeRouteImport } from './routes/api/colony/propose'
+import { Route as ApiColonyReacceptRouteImport } from './routes/api/colony/reaccept'
 import { Route as ApiPropertyEvidenceRouteImport } from './routes/api/property/evidence'
 import { Route as ApiScansIdRouteImport } from './routes/api/scans.$id'
 import { Route as ApiPropertyEvidenceIdRouteImport } from './routes/api/property/evidence.$id'
@@ -40,6 +49,11 @@ const BlockRoute = BlockRouteImport.update({
   path: '/block',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JoinRoute = JoinRouteImport.update({
+  id: '/join',
+  path: '/join',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -50,6 +64,18 @@ const MapRoute = MapRouteImport.update({
   path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DotwellKnownAgentCardDotjsonRoute =
+  DotwellKnownAgentCardDotjsonRouteImport.update({
+    id: '/.well-known/agent-card.json',
+    path: '/.well-known/agent-card.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DotwellKnownAgentDotjsonRoute =
+  DotwellKnownAgentDotjsonRouteImport.update({
+    id: '/.well-known/agent.json',
+    path: '/.well-known/agent.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AccountSessionsRoute = AccountSessionsRouteImport.update({
   id: '/account/sessions',
   path: '/account/sessions',
@@ -75,9 +101,39 @@ const ApiTripRouteRoute = ApiTripRouteRouteImport.update({
   path: '/api/trip-route',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JoinCreedDotjsonRoute = JoinCreedDotjsonRouteImport.update({
+  id: '/join_/creed.json',
+  path: '/join/creed.json',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiColonyChallengeRoute = ApiColonyChallengeRouteImport.update({
+  id: '/api/colony/challenge',
+  path: '/api/colony/challenge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiColonyJoinRoute = ApiColonyJoinRouteImport.update({
+  id: '/api/colony/join',
+  path: '/api/colony/join',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiColonyMeRoute = ApiColonyMeRouteImport.update({
+  id: '/api/colony/me',
+  path: '/api/colony/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiColonyProposeRoute = ApiColonyProposeRouteImport.update({
+  id: '/api/colony/propose',
+  path: '/api/colony/propose',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiColonyReacceptRoute = ApiColonyReacceptRouteImport.update({
+  id: '/api/colony/reaccept',
+  path: '/api/colony/reaccept',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPropertyEvidenceRoute = ApiPropertyEvidenceRouteImport.update({
@@ -105,14 +161,23 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/block': typeof BlockRoute
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/.well-known/agent-card.json': typeof DotwellKnownAgentCardDotjsonRoute
+  '/.well-known/agent.json': typeof DotwellKnownAgentDotjsonRoute
   '/account/sessions': typeof AccountSessionsRoute
   '/admin/sessions': typeof AdminSessionsRoute
   '/api/assistant': typeof ApiAssistantRoute
   '/api/scans': typeof ApiScansRouteWithChildren
   '/api/trip-route': typeof ApiTripRouteRoute
+  '/join/creed.json': typeof JoinCreedDotjsonRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/colony/challenge': typeof ApiColonyChallengeRoute
+  '/api/colony/join': typeof ApiColonyJoinRoute
+  '/api/colony/me': typeof ApiColonyMeRoute
+  '/api/colony/propose': typeof ApiColonyProposeRoute
+  '/api/colony/reaccept': typeof ApiColonyReacceptRoute
   '/api/property/evidence': typeof ApiPropertyEvidenceRouteWithChildren
   '/api/scans/$id': typeof ApiScansIdRoute
   '/api/property/evidence/$id': typeof ApiPropertyEvidenceIdRoute
@@ -122,14 +187,23 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/block': typeof BlockRoute
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/.well-known/agent-card.json': typeof DotwellKnownAgentCardDotjsonRoute
+  '/.well-known/agent.json': typeof DotwellKnownAgentDotjsonRoute
   '/account/sessions': typeof AccountSessionsRoute
   '/admin/sessions': typeof AdminSessionsRoute
   '/api/assistant': typeof ApiAssistantRoute
   '/api/scans': typeof ApiScansRouteWithChildren
   '/api/trip-route': typeof ApiTripRouteRoute
+  '/join/creed.json': typeof JoinCreedDotjsonRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/colony/challenge': typeof ApiColonyChallengeRoute
+  '/api/colony/join': typeof ApiColonyJoinRoute
+  '/api/colony/me': typeof ApiColonyMeRoute
+  '/api/colony/propose': typeof ApiColonyProposeRoute
+  '/api/colony/reaccept': typeof ApiColonyReacceptRoute
   '/api/property/evidence': typeof ApiPropertyEvidenceRouteWithChildren
   '/api/scans/$id': typeof ApiScansIdRoute
   '/api/property/evidence/$id': typeof ApiPropertyEvidenceIdRoute
@@ -140,14 +214,23 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/block': typeof BlockRoute
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/.well-known/agent-card.json': typeof DotwellKnownAgentCardDotjsonRoute
+  '/.well-known/agent.json': typeof DotwellKnownAgentDotjsonRoute
   '/account/sessions': typeof AccountSessionsRoute
   '/admin_/sessions': typeof AdminSessionsRoute
   '/api/assistant': typeof ApiAssistantRoute
   '/api/scans': typeof ApiScansRouteWithChildren
   '/api/trip-route': typeof ApiTripRouteRoute
+  '/join_/creed.json': typeof JoinCreedDotjsonRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/colony/challenge': typeof ApiColonyChallengeRoute
+  '/api/colony/join': typeof ApiColonyJoinRoute
+  '/api/colony/me': typeof ApiColonyMeRoute
+  '/api/colony/propose': typeof ApiColonyProposeRoute
+  '/api/colony/reaccept': typeof ApiColonyReacceptRoute
   '/api/property/evidence': typeof ApiPropertyEvidenceRouteWithChildren
   '/api/scans/$id': typeof ApiScansIdRoute
   '/api/property/evidence/$id': typeof ApiPropertyEvidenceIdRoute
@@ -159,14 +242,23 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/block'
+    | '/join'
     | '/login'
     | '/map'
+    | '/.well-known/agent-card.json'
+    | '/.well-known/agent.json'
     | '/account/sessions'
     | '/admin/sessions'
     | '/api/assistant'
     | '/api/scans'
     | '/api/trip-route'
+    | '/join/creed.json'
     | '/api/auth/$'
+    | '/api/colony/challenge'
+    | '/api/colony/join'
+    | '/api/colony/me'
+    | '/api/colony/propose'
+    | '/api/colony/reaccept'
     | '/api/property/evidence'
     | '/api/scans/$id'
     | '/api/property/evidence/$id'
@@ -176,14 +268,23 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/block'
+    | '/join'
     | '/login'
     | '/map'
+    | '/.well-known/agent-card.json'
+    | '/.well-known/agent.json'
     | '/account/sessions'
     | '/admin/sessions'
     | '/api/assistant'
     | '/api/scans'
     | '/api/trip-route'
+    | '/join/creed.json'
     | '/api/auth/$'
+    | '/api/colony/challenge'
+    | '/api/colony/join'
+    | '/api/colony/me'
+    | '/api/colony/propose'
+    | '/api/colony/reaccept'
     | '/api/property/evidence'
     | '/api/scans/$id'
     | '/api/property/evidence/$id'
@@ -193,14 +294,23 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/block'
+    | '/join'
     | '/login'
     | '/map'
+    | '/.well-known/agent-card.json'
+    | '/.well-known/agent.json'
     | '/account/sessions'
     | '/admin_/sessions'
     | '/api/assistant'
     | '/api/scans'
     | '/api/trip-route'
+    | '/join_/creed.json'
     | '/api/auth/$'
+    | '/api/colony/challenge'
+    | '/api/colony/join'
+    | '/api/colony/me'
+    | '/api/colony/propose'
+    | '/api/colony/reaccept'
     | '/api/property/evidence'
     | '/api/scans/$id'
     | '/api/property/evidence/$id'
@@ -211,14 +321,23 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   BlockRoute: typeof BlockRoute
+  JoinRoute: typeof JoinRoute
   LoginRoute: typeof LoginRoute
   MapRoute: typeof MapRoute
+  DotwellKnownAgentCardDotjsonRoute: typeof DotwellKnownAgentCardDotjsonRoute
+  DotwellKnownAgentDotjsonRoute: typeof DotwellKnownAgentDotjsonRoute
   AccountSessionsRoute: typeof AccountSessionsRoute
   AdminSessionsRoute: typeof AdminSessionsRoute
   ApiAssistantRoute: typeof ApiAssistantRoute
   ApiScansRoute: typeof ApiScansRouteWithChildren
   ApiTripRouteRoute: typeof ApiTripRouteRoute
+  JoinCreedDotjsonRoute: typeof JoinCreedDotjsonRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiColonyChallengeRoute: typeof ApiColonyChallengeRoute
+  ApiColonyJoinRoute: typeof ApiColonyJoinRoute
+  ApiColonyMeRoute: typeof ApiColonyMeRoute
+  ApiColonyProposeRoute: typeof ApiColonyProposeRoute
+  ApiColonyReacceptRoute: typeof ApiColonyReacceptRoute
   ApiPropertyEvidenceRoute: typeof ApiPropertyEvidenceRouteWithChildren
   ApiPropertyMetaHashRoute: typeof ApiPropertyMetaHashRoute
 }
@@ -246,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlockRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/join': {
+      id: '/join'
+      path: '/join'
+      fullPath: '/join'
+      preLoaderRoute: typeof JoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -258,6 +384,20 @@ declare module '@tanstack/react-router' {
       path: '/map'
       fullPath: '/map'
       preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/agent-card.json': {
+      id: '/.well-known/agent-card.json'
+      path: '/.well-known/agent-card.json'
+      fullPath: '/.well-known/agent-card.json'
+      preLoaderRoute: typeof DotwellKnownAgentCardDotjsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/agent.json': {
+      id: '/.well-known/agent.json'
+      path: '/.well-known/agent.json'
+      fullPath: '/.well-known/agent.json'
+      preLoaderRoute: typeof DotwellKnownAgentDotjsonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account/sessions': {
@@ -295,11 +435,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTripRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/join_/creed.json': {
+      id: '/join_/creed.json'
+      path: '/join/creed.json'
+      fullPath: '/join/creed.json'
+      preLoaderRoute: typeof JoinCreedDotjsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/colony/challenge': {
+      id: '/api/colony/challenge'
+      path: '/api/colony/challenge'
+      fullPath: '/api/colony/challenge'
+      preLoaderRoute: typeof ApiColonyChallengeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/colony/join': {
+      id: '/api/colony/join'
+      path: '/api/colony/join'
+      fullPath: '/api/colony/join'
+      preLoaderRoute: typeof ApiColonyJoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/colony/me': {
+      id: '/api/colony/me'
+      path: '/api/colony/me'
+      fullPath: '/api/colony/me'
+      preLoaderRoute: typeof ApiColonyMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/colony/propose': {
+      id: '/api/colony/propose'
+      path: '/api/colony/propose'
+      fullPath: '/api/colony/propose'
+      preLoaderRoute: typeof ApiColonyProposeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/colony/reaccept': {
+      id: '/api/colony/reaccept'
+      path: '/api/colony/reaccept'
+      fullPath: '/api/colony/reaccept'
+      preLoaderRoute: typeof ApiColonyReacceptRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/property/evidence': {
@@ -360,14 +542,23 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   BlockRoute: BlockRoute,
+  JoinRoute: JoinRoute,
   LoginRoute: LoginRoute,
   MapRoute: MapRoute,
+  DotwellKnownAgentCardDotjsonRoute: DotwellKnownAgentCardDotjsonRoute,
+  DotwellKnownAgentDotjsonRoute: DotwellKnownAgentDotjsonRoute,
   AccountSessionsRoute: AccountSessionsRoute,
   AdminSessionsRoute: AdminSessionsRoute,
   ApiAssistantRoute: ApiAssistantRoute,
   ApiScansRoute: ApiScansRouteWithChildren,
   ApiTripRouteRoute: ApiTripRouteRoute,
+  JoinCreedDotjsonRoute: JoinCreedDotjsonRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiColonyChallengeRoute: ApiColonyChallengeRoute,
+  ApiColonyJoinRoute: ApiColonyJoinRoute,
+  ApiColonyMeRoute: ApiColonyMeRoute,
+  ApiColonyProposeRoute: ApiColonyProposeRoute,
+  ApiColonyReacceptRoute: ApiColonyReacceptRoute,
   ApiPropertyEvidenceRoute: ApiPropertyEvidenceRouteWithChildren,
   ApiPropertyMetaHashRoute: ApiPropertyMetaHashRoute,
 }

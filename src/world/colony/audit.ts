@@ -10,6 +10,9 @@ export type AuditAction =
   | "address.rejected"
   | "status.changed"
   | "switch.changed"
+  | "member.applied"
+  | "member.decided"
+  | "member.reaccepted"
   | "work.blocked";
 
 export type AuditRow = {

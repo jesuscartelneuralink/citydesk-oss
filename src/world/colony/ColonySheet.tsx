@@ -8,6 +8,7 @@ import { CHAINS, shortAddress, type Chain } from "./addresses";
 import { dollars } from "./ledger";
 import { SPEND_CAP_CENTS } from "./work";
 import type { ColonyView } from "./work.server";
+import { JoinCard } from "@/world/join/JoinCard";
 
 /** Loaded on first use, so the map's first paint does not pull the auth client into its graph. */
 const fns = () => import("./work.functions");
@@ -143,6 +144,7 @@ export function ColonySheet({ onClose }: { onClose: () => void }) {
           </section>
         ))}
       </div>
+      <JoinCard applicants={view?.members.applicants ?? 0} newcomers={view?.members.newcomers ?? 0} isAdmin={view?.isAdmin === true} />
       {view ? <CitizenLedger view={view} reload={reload} onNote={setNote} /> : null}
       <p className="mt-3 text-sm font-medium">Latest</p>
       <ul className="mt-1 space-y-1">

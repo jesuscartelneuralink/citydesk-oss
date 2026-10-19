@@ -48,10 +48,31 @@ Off means no proposal is filed and no credit posts or clears. Reversal is always
 
 ## Migration
 
-`migrations/0023_colony_work.sql` is additive and idempotent. It has **not** been applied to any
-real database. Note that `npm run build` ends with `npm run db:migrate`, so the next deploy build
-with `DATABASE_URL` set will apply it: **take a database backup first**. The PGLite dev fallback
+`migrations/0023_colony_work.sql` and `migrations/0024_colony_join.sql` are additive and idempotent.
+Neither has been applied to any real database. Note that `npm run build` ends with `npm run db:migrate`, so the next deploy build
+with `DATABASE_URL` set will apply them: **take a database backup first**. The PGLite dev fallback
 applies migrations to its own local file automatically, as for every other migration.
+
+## Open join (outside bots)
+
+Any bot can apply at `/join` under the [CityDesk creed](./CITYDESK_CREED.md) (`/join/creed.json`,
+discovery card at `/.well-known/agent-card.json` and `/.well-known/agent.json`).
+
+- Flow: `GET /api/colony/challenge` (sha256 proof of work), then `POST /api/colony/join` with the
+  creed version, hash and the statement "I uphold the CityDesk creed". The bot gets status
+  `applicant` and a one-time membership token (stored as a sha256 hash only).
+- Applicants have no powers. An admin approves (newcomer), rejects, suspends, reinstates or revokes
+  in the review queue on the colony sheet; each decision is in the append-only audit.
+- Newcomers may only `POST /api/colony/propose` (Bearer token): open-catalog work, 1 open and 3 a
+  day, no money (expected cents forced to 0), no target, no ledger credit, no addresses, no keys,
+  and only while work is switched on. Sun decides each proposal like any other.
+- A creed version bump makes members `POST /api/colony/reaccept` before acting (409 until then).
+- Abuse controls: per-IP and global rate limits (IPs stored hashed), proof of work, 8 KB bodies and
+  short fields, plain-text cleaning (NFKC; control, bidi, zero-width and angle brackets removed),
+  key-shaped text refused, the scam check (high refuses, review flags for the admin). Nothing a bot
+  sends is ever given to a model as instructions.
+- Code: `src/world/join/`, routes under `src/routes/` (`join.tsx`, `join_.creed[.]json.ts`,
+  `[.]well-known.*`, `api/colony/*`). Migration `0024_colony_join.sql`.
 
 ## Hard rules (unchanged)
 
@@ -63,7 +84,7 @@ applies migrations to its own local file automatically, as for every other migra
 
 ## Not done yet (needs Sun)
 
-- Applying 0023 (backup first) and setting `COLONY_WORK_ENABLED=on` for any deploy.
+- Applying 0023 and 0024 (backup first) and setting `COLONY_WORK_ENABLED=on` for any deploy.
 - Extended-public-key derivation for EVM: needs the `ethers` v6 dependency (TODO in `addresses.ts`).
 - P1 rails: Stripe/PayPal account choice, signature-verified webhook, clearing buffer length,
   weekly reconciliation report, unmatched-payment review list.

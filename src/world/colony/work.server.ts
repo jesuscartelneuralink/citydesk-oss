@@ -52,12 +52,12 @@ export async function resolveCaller(
   return { userId, isAdmin: admin, label };
 }
 
-function requireAdmin(caller: Caller): void {
+export function requireAdmin(caller: Caller): void {
   if (!caller.userId) throw new ColonyError("Sign in first.", 401);
   if (!caller.isAdmin) throw new ColonyError("Admins only.", 403);
 }
 
-async function audit(
+export async function audit(
   sql: Sql,
   caller: Caller,
   action: AuditAction,
@@ -142,12 +142,27 @@ export type ColonyView = {
   adminSwitchOn: boolean;
   citizens: readonly Citizen[];
   proposals: readonly Proposal[];
+  /** Open-join counts (public). Zero until migration 0024 is applied. */
+  members: { applicants: number; newcomers: number };
   admin: null | {
     pending: readonly LedgerEntry[];
     addresses: readonly WatchAddress[];
     audit: readonly AuditRow[];
   };
 };
+
+async function memberCountsSafe(sql: Sql): Promise<{ applicants: number; newcomers: number }> {
+  try {
+    const rows = await sql<{
+      status: string;
+      n: number;
+    }>`select status, count(*)::int as n from colony_members where status in ('applicant', 'newcomer') group by status`;
+    const of = (s: string) => Number(rows.find((r) => r.status === s)?.n ?? 0);
+    return { applicants: of("applicant"), newcomers: of("newcomer") };
+  } catch {
+    return { applicants: 0, newcomers: 0 };
+  }
+}
 
 export async function colonyView(
   sql: Sql,
@@ -163,6 +178,7 @@ export async function colonyView(
     >`select * from colony_proposals order by created_at asc, id asc limit 200`
   ).map(toProposal);
   const base = {
+    members: await memberCountsSafe(sql),
     isAdmin: caller.isAdmin,
     workOn: workEffective(envAllowed, switchOn),
     envAllowed,
