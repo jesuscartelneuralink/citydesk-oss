@@ -576,18 +576,27 @@ describe("property server ⇄ scratch Postgres (integration)", { skip }, () => {
       await rejectsWith(S.mintCompressedRecordStub(randomUUID()), 501, /NDU-2/);
     });
 
-    it("even with PROPERTY_MINT_ENABLED=true nothing is minted", async () => {
+    it("with PROPERTY_MINT_ENABLED=true the owner anchors from their own wallet; the server mints nothing", async () => {
+      // NDU-24/26-29 (f8e4384): the flag now enables user-signed devnet Memo anchoring. The server
+      // never signs and never mints; the record stays off-chain until the owner's wallet signs.
       await withEnv({ PROPERTY_MINT_ENABLED: "true" }, async () => {
         assert.equal(S.mintFeatureFlag(), true);
         const c = await claimedItem();
         assert.equal(c.res.status, "awaiting_mint");
-        assert.match(c.res.mintNote, /NDU-2/);
+        assert.match(c.res.mintNote, /anchor it on Solana devnet from your wallet/);
         const rec = (await sql<Record<string, unknown>>`select * from property_records where id = ${c.res.recordId}`)[0];
         assert.equal(rec.status, "awaiting_mint");
         for (const k of ["asset_id", "tree", "leaf_index", "mint_sig"]) assert.equal(rec[k], null, k);
         const card = await S.verifyItem(sql, kek, c.userId, c.item.id);
-        assert.equal(card.mintEnabled, false);
-        assert.equal(card.checks[0].status, "unavailable");
+        assert.equal(card.mintEnabled, true, "mintEnabled reflects the flag");
+        assert.equal(card.checks[0].status, "unavailable", "nothing is on-chain until the owner signs");
+        assert.match(card.checks[0].detail, /from their own wallet/);
+      });
+      await withEnv({ PROPERTY_MINT_ENABLED: undefined }, async () => {
+        const c = await claimedItem();
+        assert.match(c.res.mintNote, /switched off/);
+        const card = await S.verifyItem(sql, kek, c.userId, c.item.id);
+        assert.equal(card.mintEnabled, false, "mintEnabled reflects the flag");
       });
       const rows = await sql.query<{ n: number }>(
         `select count(*)::int as n from property_records where user_id = any($1::text[]) and (status <> 'awaiting_mint' or asset_id is not null or mint_sig is not null)`,
@@ -601,6 +610,25 @@ describe("property server ⇄ scratch Postgres (integration)", { skip }, () => {
       for (const re of [/Keypair/, /secretKey/, /fromSecretKey/, /sendTransaction/, /sendRawTransaction/, /signTransaction/, /@metaplex/, /\bumi\b/i, /new Connection\(/]) {
         assert.doesNotMatch(src, re);
       }
+    });
+
+    it("the devnet anchor relay never signs: it only forwards a transaction the owner's wallet signed", async () => {
+      const file = path.join(ROOT, "src/world/property-anchor.server.ts");
+      const src = (await readFile(file, "utf8")).replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+      for (const re of [/Keypair/, /secretKey/, /fromSecretKey/, /fromSeed/, /signTransaction/, /partialSign/, /\.sign\(/, /tweetnacl/, /@metaplex/, /\bumi\b/i]) {
+        assert.doesNotMatch(src, re);
+      }
+    });
+
+    it("mainnet stays blocked: cluster, RPC and genesis guards all refuse it", async () => {
+      const K = await import("../../src/lib/solana/cluster.ts");
+      assert.equal(K.requireDevnetCluster(undefined), "devnet");
+      assert.equal(K.requireDevnetCluster("devnet"), "devnet");
+      for (const v of ["mainnet-beta", "mainnet", "testnet"]) assert.throws(() => K.requireDevnetCluster(v), /devnet only/);
+      assert.throws(() => K.assertNotMainnetRpc("https://api.mainnet-beta.solana.com"), /Mainnet RPC refused/);
+      assert.equal(K.assertNotMainnetRpc("https://api.devnet.solana.com"), "https://api.devnet.solana.com");
+      assert.throws(() => K.assertDevnetGenesis(K.MAINNET_GENESIS), /mainnet/);
+      assert.doesNotThrow(() => K.assertDevnetGenesis(K.DEVNET_GENESIS));
     });
   });
 
