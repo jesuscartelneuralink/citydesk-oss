@@ -8,15 +8,9 @@ import { CHAINS, shortAddress, type Chain } from "./addresses";
 import { dollars } from "./ledger";
 import { SPEND_CAP_CENTS } from "./work";
 import type { ColonyView } from "./work.server";
-import {
-  addColonyWatchAddress,
-  clearColonyCredit,
-  creditColonyCents,
-  decideColonyProposal,
-  getColonyView,
-  reverseColonyCredit,
-  setColonyWorkSwitch,
-} from "./work.functions";
+
+/** Loaded on first use, so the map's first paint does not pull the auth client into its graph. */
+const fns = () => import("./work.functions");
 
 /** Server errors arrive as plain Errors; show their message, never a stack. */
 const why = (err: unknown) => (err instanceof Error && err.message ? err.message : "That was refused.");
@@ -53,7 +47,7 @@ export function ColonySheet({ onClose }: { onClose: () => void }) {
   const [viewError, setViewError] = useState("");
   const reload = useCallback(async () => {
     try {
-      setView(await getColonyView());
+      setView(await (await fns()).getColonyView());
       setViewError("");
     } catch (err) {
       setViewError(why(err));
@@ -80,7 +74,7 @@ export function ColonySheet({ onClose }: { onClose: () => void }) {
 
   const decide = async (id: string, status: "approved" | "refused") => {
     try {
-      await decideColonyProposal({ data: { id, status } });
+      await (await fns()).decideColonyProposal({ data: { id, status } });
       setNote(status === "approved" ? "You approved it. Nothing was signed. Pay it in your own wallet, or leave it." : "You refused it. The bot cannot pay it.");
     } catch (err) {
       setNote(why(err));
@@ -221,7 +215,7 @@ function CitizenLedger({ view, reload, onNote }: { view: ColonyView; reload: () 
   const flip = () =>
     act(async () => {
       const next = !view.adminSwitchOn;
-      await setColonyWorkSwitch({ data: { on: next } });
+      await (await fns()).setColonyWorkSwitch({ data: { on: next } });
       return next ? (view.envAllowed ? "Work switched on." : "Admin switch on. The server kill switch is still off, so work stays off.") : "Work switched off.";
     });
 
@@ -229,24 +223,24 @@ function CitizenLedger({ view, reload, onNote }: { view: ColonyView; reload: () 
     act(async () => {
       const value = address;
       setAddress("");
-      await addColonyWatchAddress({ data: { citizenId: who, chain, address: value } });
+      await (await fns()).addColonyWatchAddress({ data: { citizenId: who, chain, address: value } });
       return "Watch-only address saved. It can receive, never spend.";
     });
 
   const record = () =>
     act(async () => {
       const amount = Number(cents);
-      await creditColonyCents({ data: { citizenId: who, amountCents: amount, source: "internal", ref: "W3 draft for an own project" } });
+      await (await fns()).creditColonyCents({ data: { citizenId: who, amountCents: amount, source: "internal", ref: "W3 draft for an own project" } });
       return `${dollars(amount)} recorded as pending. Clear it to count.`;
     });
 
   const settle = (id: string, how: "clear" | "reverse") =>
     act(async () => {
       if (how === "reverse") {
-        await reverseColonyCredit({ data: { id } });
+        await (await fns()).reverseColonyCredit({ data: { id } });
         return "Reversed. It no longer counts.";
       }
-      const result = await clearColonyCredit({ data: { id } });
+      const result = await (await fns()).clearColonyCredit({ data: { id } });
       return result.welcome ?? "Cleared. It now counts toward status.";
     });
 
