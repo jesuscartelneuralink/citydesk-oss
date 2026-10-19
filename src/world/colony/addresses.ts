@@ -2,6 +2,8 @@
  * Watch-only receive addresses. Sun creates every wallet in his own wallet app, on his own device,
  * and pastes only the PUBLIC address here. The colony stores public addresses and nothing else.
  *
+ * Rows live server-side in colony_addresses; only a logged-in admin can add one.
+ *
  * Validation is public-address format only:
  * - EVM: 0x followed by exactly 40 hex characters (one address covers every EVM chain).
  * - Solana: base58 that decodes to exactly 32 bytes. A 64-byte decode is a key-shaped value and is
@@ -11,9 +13,6 @@
  * TODO(needs Sun's OK): extended-public-key derivation for EVM needs the ethers v6 dependency
  * (HDNodeWallet.fromExtendedKey -> HDNodeVoidWallet.deriveChild). Not added in P0.
  */
-import { audit } from "./audit.ts";
-import { CITY_AGENTS } from "./cities.ts";
-import { isOperator } from "./work.ts";
 
 export type Chain = "evm" | "solana-devnet" | "solana";
 
@@ -24,13 +23,17 @@ export const CHAINS: readonly { id: Chain; label: string }[] = [
 ];
 
 export type WatchAddress = {
+  readonly id: string;
   readonly citizenId: string;
   readonly chain: Chain;
   readonly address: string;
-  readonly source: "pasted";
-  readonly addedBy: "sun";
-  readonly addedAt: number;
+  readonly addedBy: string;
+  readonly addedAt: string;
 };
+
+export function isChain(value: unknown): value is Chain {
+  return value === "evm" || value === "solana-devnet" || value === "solana";
+}
 
 export type AddressCheck = { ok: true; address: string } | { ok: false; reason: string };
 
@@ -90,79 +93,6 @@ export function checkAddress(chain: Chain, raw: string): AddressCheck {
   return { ok: true, address: value };
 }
 
-const KEY = "ndu-colony-addresses-v1";
-let rows: WatchAddress[] = load();
-
-function load(): WatchAddress[] {
-  if (typeof localStorage === "undefined") return [];
-  try {
-    const raw = JSON.parse(localStorage.getItem(KEY) || "[]") as WatchAddress[];
-    if (!Array.isArray(raw)) return [];
-    // Re-validate on load so nothing that fails the public-address check survives in storage.
-    return raw.filter((row) => row && checkAddress(row.chain, String(row.address)).ok);
-  } catch {
-    return [];
-  }
-}
-
-function save() {
-  if (typeof localStorage === "undefined") return;
-  try {
-    localStorage.setItem(KEY, JSON.stringify(rows));
-  } catch {
-    /* in-memory list still holds */
-  }
-}
-
-/** Sun pastes a public address for a citizen. Not gated by the work switch: it is Sun's own action. */
-export function addWatchAddress(
-  actor: string,
-  citizenId: string,
-  chain: Chain,
-  raw: string,
-  at = Date.now(),
-): AddressCheck {
-  if (!isOperator(actor)) return { ok: false, reason: "Only Sun can add an address." };
-  if (!CITY_AGENTS.some((row) => row.id === citizenId))
-    return { ok: false, reason: "Unknown citizen." };
-  const check = checkAddress(chain, raw);
-  if (!check.ok) {
-    // Never log the rejected value itself.
-    audit(actor, "address.rejected", citizenId, `${chain}: ${check.reason}`, at);
-    return check;
-  }
-  if (
-    rows.some(
-      (row) => row.chain === chain && row.address.toLowerCase() === check.address.toLowerCase(),
-    )
-  ) {
-    return { ok: false, reason: "That address is already on the list." };
-  }
-  rows = [
-    ...rows,
-    Object.freeze({
-      citizenId,
-      chain,
-      address: check.address,
-      source: "pasted",
-      addedBy: "sun",
-      addedAt: at,
-    }),
-  ];
-  save();
-  audit(actor, "address.added", citizenId, `${chain} ${check.address}`, at);
-  return check;
-}
-
-export function addressesOf(citizenId: string): readonly WatchAddress[] {
-  return rows.filter((row) => row.citizenId === citizenId);
-}
-
 export function shortAddress(address: string): string {
   return address.length > 12 ? `${address.slice(0, 6)}...${address.slice(-4)}` : address;
-}
-
-/** Tests only. */
-export function resetAddressesForTests(): void {
-  rows = [];
 }

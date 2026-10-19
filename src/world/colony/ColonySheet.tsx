@@ -1,15 +1,25 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { vouchers } from "@/game/sim";
 import { COLONY, LAWS } from "./charter";
 import { CITIES } from "./cities";
 import { civicPurse, cityRoster, fundCivic, meetNext, startLiving, subscribeCivic } from "./purse";
-import { decideProposal, proposals } from "./proposals";
 import "@/world/empty-state/emboss.css";
-import { addressesOf, addWatchAddress, CHAINS, shortAddress, type Chain } from "./addresses";
-import { auditLog } from "./audit";
-import { citizens, noteStatusChanges } from "./citizens";
-import { clearCredit, credit, dollars, ledgerOf, reverseCredit } from "./ledger";
-import { OPERATOR_ID, SPEND_CAP_CENTS, workEnabled } from "./work";
+import { CHAINS, shortAddress, type Chain } from "./addresses";
+import { dollars } from "./ledger";
+import { SPEND_CAP_CENTS } from "./work";
+import type { ColonyView } from "./work.server";
+import {
+  addColonyWatchAddress,
+  clearColonyCredit,
+  creditColonyCents,
+  decideColonyProposal,
+  getColonyView,
+  reverseColonyCredit,
+  setColonyWorkSwitch,
+} from "./work.functions";
+
+/** Server errors arrive as plain Errors; show their message, never a stack. */
+const why = (err: unknown) => (err instanceof Error && err.message ? err.message : "That was refused.");
 
 const WORD = { quiet: "Quiet", steady: "Steady", booming: "Booming" } as const;
 
@@ -39,7 +49,20 @@ export function ColonySheet({ onClose }: { onClose: () => void }) {
   const [civic, setCivic] = useState(civicPurse());
   const [held, setHeld] = useState(vouchers());
   const [note, setNote] = useState("");
-  const [desk, setDesk] = useState(proposals());
+  const [view, setView] = useState<ColonyView | null>(null);
+  const [viewError, setViewError] = useState("");
+  const reload = useCallback(async () => {
+    try {
+      setView(await getColonyView());
+      setViewError("");
+    } catch (err) {
+      setViewError(why(err));
+    }
+  }, []);
+  useEffect(() => {
+    void reload();
+  }, [reload]);
+  const desk = view?.proposals ?? [];
 
   useEffect(() => {
     startLiving();
@@ -55,10 +78,14 @@ export function ColonySheet({ onClose }: { onClose: () => void }) {
     setNote(ok ? "20 game vouchers moved into the civic purse." : "Not enough game vouchers to fund 20.");
   };
 
-  const decide = (id: string, status: "approved" | "refused") => {
-    decideProposal(id, status);
-    setDesk(proposals());
-    setNote(status === "approved" ? "You approved it. Nothing was signed. Pay it in your own wallet, or leave it." : "You refused it. The bot cannot pay it.");
+  const decide = async (id: string, status: "approved" | "refused") => {
+    try {
+      await decideColonyProposal({ data: { id, status } });
+      setNote(status === "approved" ? "You approved it. Nothing was signed. Pay it in your own wallet, or leave it." : "You refused it. The bot cannot pay it.");
+    } catch (err) {
+      setNote(why(err));
+    }
+    await reload();
   };
 
   const meet = (cityId: string) => {
@@ -90,7 +117,8 @@ export function ColonySheet({ onClose }: { onClose: () => void }) {
       </div>
       {note ? <p className="text-muted mt-2 text-sm">{note}</p> : null}
       <p className="mt-4 text-sm font-medium">Your wallet, not theirs</p>
-      <p className="text-muted mt-1 text-sm">A bot can name a job and a price. Only you can approve it. Approving does not move money and does not give the bot a key.</p>
+      <p className="text-muted mt-1 text-sm">A bot can name a job and a price. Only an admin can approve it. Approving does not move money and does not give the bot a key.</p>
+      {viewError ? <p className="text-muted mt-1 text-sm">{viewError}</p> : null}
       <div className="mt-2 space-y-2">
         {desk.map((row) => (
           <section key={row.id} className="bg-bg rounded-2xl p-3">
@@ -99,7 +127,8 @@ export function ColonySheet({ onClose }: { onClose: () => void }) {
             </p>
             <p className="text-sm">{row.job}</p>
             <p className="text-muted text-sm">{row.price}</p>
-            {row.status === "open" ? (
+            {row.status === "open" && !view?.isAdmin ? <p className="text-muted mt-2 text-sm">Waiting for an admin.</p> : null}
+            {row.status === "open" && view?.isAdmin ? (
               <div className="mt-2 flex gap-2">
                 <button type="button" className="bg-accent text-bg min-h-11 rounded-full px-3 text-sm" onClick={() => decide(row.id, "approved")}>
                   Approve
@@ -108,15 +137,19 @@ export function ColonySheet({ onClose }: { onClose: () => void }) {
                   Refuse
                 </button>
               </div>
-            ) : (
-              <p className="mt-2 text-sm">{row.status === "approved" ? "Approved by you. Unpaid until your wallet pays it." : "Refused."}</p>
-            )}
+            ) : null}
+            {row.status !== "open" ? (
+              <p className="mt-2 text-sm">
+                {row.status === "approved" ? "Approved. Unpaid until a wallet pays it." : "Refused."}
+                {row.decidedBy ? <span className="text-muted"> · by {row.decidedBy}</span> : null}
+              </p>
+            ) : null}
             {row.payload ? <p className="text-muted mt-1 line-clamp-3 text-xs">Draft: {row.payload}</p> : null}
             {row.target ? <p className="text-muted text-xs">Goes to: {row.target} · you do the outward step yourself</p> : null}
           </section>
         ))}
       </div>
-      <CitizenLedger onNote={setNote} />
+      {view ? <CitizenLedger view={view} reload={reload} onNote={setNote} /> : null}
       <p className="mt-3 text-sm font-medium">Latest</p>
       <ul className="mt-1 space-y-1">
         {civic.notes.map((line, index) => (
@@ -161,104 +194,130 @@ export function ColonySheet({ onClose }: { onClose: () => void }) {
 }
 
 /**
- * P0/P1 work system: each citizen's real-cent ledger and badge, Sun's watch-only addresses,
- * internal credits, and the audit trail. Nothing here signs, sends, spends, or withdraws.
+ * P0/P1 work system: each citizen's real-cent badge and totals for everyone; for admins, the work
+ * switch, watched addresses, internal credits, clear/reverse, and the audit trail. Every change goes
+ * through a server function that checks the admin login. Nothing here signs, sends, spends, or withdraws.
  */
-function CitizenLedger({ onNote }: { onNote: (note: string) => void }) {
-  const [, setTick] = useState(0);
-  const people = citizens();
+function CitizenLedger({ view, reload, onNote }: { view: ColonyView; reload: () => Promise<void>; onNote: (note: string) => void }) {
+  const people = view.citizens;
+  const admin = view.isAdmin ? view.admin : null;
   const [who, setWho] = useState(people[0]?.citizenId ?? "");
   const [chain, setChain] = useState<Chain>("evm");
   const [address, setAddress] = useState("");
   const [cents, setCents] = useState("1");
-  const on = workEnabled();
-  const refresh = () => {
-    const welcomes = noteStatusChanges();
-    if (welcomes.length) onNote(welcomes.join(" "));
-    setTick((n) => n + 1);
+  const [busy, setBusy] = useState(false);
+
+  const act = async (fn: () => Promise<string>) => {
+    setBusy(true);
+    try {
+      onNote(await fn());
+    } catch (err) {
+      onNote(why(err));
+    }
+    await reload();
+    setBusy(false);
   };
 
-  const paste = () => {
-    const result = addWatchAddress(OPERATOR_ID, who, chain, address);
-    setAddress("");
-    onNote(result.ok ? "Watch-only address saved. It can receive, never spend." : result.reason);
-    refresh();
-  };
+  const flip = () =>
+    act(async () => {
+      const next = !view.adminSwitchOn;
+      await setColonyWorkSwitch({ data: { on: next } });
+      return next ? (view.envAllowed ? "Work switched on." : "Admin switch on. The server kill switch is still off, so work stays off.") : "Work switched off.";
+    });
 
-  const record = () => {
-    const amount = Number(cents);
-    const row = credit(OPERATOR_ID, { citizenId: who, jobId: `w3-${Date.now().toString(36)}`, source: "internal", ref: "W3 draft for Sun's project", amountCents: amount });
-    onNote(row ? `${dollars(amount)} recorded as pending. Clear it to count.` : on ? "Use whole cents above zero." : "Colony work is switched off.");
-    refresh();
-  };
+  const paste = () =>
+    act(async () => {
+      const value = address;
+      setAddress("");
+      await addColonyWatchAddress({ data: { citizenId: who, chain, address: value } });
+      return "Watch-only address saved. It can receive, never spend.";
+    });
 
-  const settle = (id: string, how: "clear" | "reverse") => {
-    const ok = how === "clear" ? clearCredit(OPERATOR_ID, id) : reverseCredit(OPERATOR_ID, id);
-    onNote(ok ? (how === "clear" ? "Cleared. It now counts toward status." : "Reversed. It no longer counts.") : "That change was refused.");
-    refresh();
-  };
+  const record = () =>
+    act(async () => {
+      const amount = Number(cents);
+      await creditColonyCents({ data: { citizenId: who, amountCents: amount, source: "internal", ref: "W3 draft for an own project" } });
+      return `${dollars(amount)} recorded as pending. Clear it to count.`;
+    });
 
-  const recent = auditLog().slice(-5).reverse();
+  const settle = (id: string, how: "clear" | "reverse") =>
+    act(async () => {
+      if (how === "reverse") {
+        await reverseColonyCredit({ data: { id } });
+        return "Reversed. It no longer counts.";
+      }
+      const result = await clearColonyCredit({ data: { id } });
+      return result.welcome ?? "Cleared. It now counts toward status.";
+    });
 
   return (
     <section className="ndu-es-card mt-4 rounded-3xl p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm font-medium">Work and ledger · real cents</p>
-        <span className="ndu-es-chip rounded-full px-2.5 py-1 text-xs">{on ? "Work switch on" : "Work switch off"}</span>
+        {admin ? (
+          <button type="button" className={`ndu-es-push min-h-9 rounded-full px-3 text-xs ${view.adminSwitchOn ? "is-hot" : ""}`} onClick={flip} disabled={busy}>
+            {view.workOn ? "Work on" : view.adminSwitchOn ? "Admin switch on · server off" : "Work off"}
+          </button>
+        ) : (
+          <span className="ndu-es-chip rounded-full px-2.5 py-1 text-xs">{view.workOn ? "Work on" : "Work off"}</span>
+        )}
       </div>
       <p className="text-muted mt-1 text-xs">
-        Earnings land in your accounts, not theirs. Every citizen&apos;s real spend cap is {dollars(SPEND_CAP_CENTS)}, and there is no withdraw. One cleared cent
-        makes a Prominent Member, with in-game perks only.
+        Earnings land in the operator&apos;s accounts, not theirs. Every citizen&apos;s real spend cap is {dollars(SPEND_CAP_CENTS)}, and there is no withdraw. One
+        cleared cent makes a Prominent Member, with in-game perks only.
+        {admin ? "" : " Read-only: only an admin can change anything here."}
       </p>
-      <div className="ndu-es-well mt-3 space-y-2 rounded-2xl p-3">
-        <label className="block text-xs">
-          Citizen
-          <select className="bg-bg mt-1 block min-h-11 w-full rounded-xl px-2 text-sm" value={who} onChange={(event) => setWho(event.target.value)}>
-            {people.map((row) => (
-              <option key={row.citizenId} value={row.citizenId}>
-                {row.name} · {row.city}
-              </option>
-            ))}
-          </select>
-        </label>
-        <div className="flex flex-wrap gap-2">
-          <select className="bg-bg min-h-11 rounded-xl px-2 text-sm" value={chain} onChange={(event) => setChain(event.target.value as Chain)} aria-label="Chain">
-            {CHAINS.map((row) => (
-              <option key={row.id} value={row.id}>
-                {row.label}
-              </option>
-            ))}
-          </select>
-          <input
-            className="bg-bg min-h-11 min-w-0 flex-1 rounded-xl px-2 text-sm"
-            value={address}
-            onChange={(event) => setAddress(event.target.value)}
-            placeholder="Public address from your own wallet"
-            autoComplete="off"
-            spellCheck={false}
-            aria-label="Public address"
-          />
-          <button type="button" className="ndu-es-push min-h-11 rounded-full px-3 text-sm" onClick={paste} disabled={!address.trim()}>
-            Add watch-only
-          </button>
+      {admin ? (
+        <div className="ndu-es-well mt-3 space-y-2 rounded-2xl p-3">
+          <label className="block text-xs">
+            Citizen
+            <select className="bg-bg mt-1 block min-h-11 w-full rounded-xl px-2 text-sm" value={who} onChange={(event) => setWho(event.target.value)}>
+              {people.map((row) => (
+                <option key={row.citizenId} value={row.citizenId}>
+                  {row.name} · {row.city}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <select className="bg-bg min-h-11 rounded-xl px-2 text-sm" value={chain} onChange={(event) => setChain(event.target.value as Chain)} aria-label="Chain">
+              {CHAINS.map((row) => (
+                <option key={row.id} value={row.id}>
+                  {row.label}
+                </option>
+              ))}
+            </select>
+            <input
+              className="bg-bg min-h-11 min-w-0 flex-1 rounded-xl px-2 text-sm"
+              value={address}
+              onChange={(event) => setAddress(event.target.value)}
+              placeholder="Public address from your own wallet"
+              autoComplete="off"
+              spellCheck={false}
+              aria-label="Public address"
+            />
+            <button type="button" className="ndu-es-push min-h-11 rounded-full px-3 text-sm" onClick={paste} disabled={busy || !address.trim()}>
+              Add watch-only
+            </button>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              className="bg-bg min-h-11 w-24 rounded-xl px-2 text-sm"
+              inputMode="numeric"
+              value={cents}
+              onChange={(event) => setCents(event.target.value.replace(/[^0-9]/g, ""))}
+              aria-label="Cents"
+            />
+            <button type="button" className="ndu-es-push is-hot min-h-11 rounded-full px-3 text-sm" onClick={record} disabled={busy || !view.workOn}>
+              Record internal credit (W3)
+            </button>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <input
-            className="bg-bg min-h-11 w-24 rounded-xl px-2 text-sm"
-            inputMode="numeric"
-            value={cents}
-            onChange={(event) => setCents(event.target.value.replace(/[^0-9]/g, ""))}
-            aria-label="Cents"
-          />
-          <button type="button" className="ndu-es-push is-hot min-h-11 rounded-full px-3 text-sm" onClick={record} disabled={!on}>
-            Record internal credit (W3)
-          </button>
-        </div>
-      </div>
+      ) : null}
       <ul className="mt-3 space-y-2">
         {people.map((row) => {
-          const pending = ledgerOf(row.citizenId).filter((entry) => entry.state === "pending");
-          const watch = addressesOf(row.citizenId);
+          const pending = admin ? admin.pending.filter((entry) => entry.citizenId === row.citizenId) : [];
+          const watch = admin ? admin.addresses.filter((item) => item.citizenId === row.citizenId) : [];
           return (
             <li key={row.citizenId} className="ndu-es-well rounded-2xl p-2.5">
               <div className="flex items-center justify-between gap-2">
@@ -277,10 +336,10 @@ function CitizenLedger({ onNote }: { onNote: (note: string) => void }) {
               {pending.map((entry) => (
                 <div key={entry.id} className="mt-1 flex items-center gap-2 text-xs">
                   <span>{dollars(entry.amountCents)} pending</span>
-                  <button type="button" className="ndu-es-push min-h-9 rounded-full px-2 text-xs" onClick={() => settle(entry.id, "clear")} disabled={!on}>
+                  <button type="button" className="ndu-es-push min-h-9 rounded-full px-2 text-xs" onClick={() => settle(entry.id, "clear")} disabled={busy || !view.workOn}>
                     Clear
                   </button>
-                  <button type="button" className="ndu-es-push min-h-9 rounded-full px-2 text-xs" onClick={() => settle(entry.id, "reverse")}>
+                  <button type="button" className="ndu-es-push min-h-9 rounded-full px-2 text-xs" onClick={() => settle(entry.id, "reverse")} disabled={busy}>
                     Reverse
                   </button>
                 </div>
@@ -289,11 +348,11 @@ function CitizenLedger({ onNote }: { onNote: (note: string) => void }) {
           );
         })}
       </ul>
-      {recent.length ? (
+      {admin?.audit.length ? (
         <>
           <p className="mt-3 text-xs font-medium">Audit trail</p>
           <ul className="mt-1 space-y-0.5">
-            {recent.map((row) => (
+            {admin.audit.slice(0, 8).map((row) => (
               <li key={row.seq} className="text-muted text-xs">
                 {new Date(row.at).toLocaleString()} · {row.actor} · {row.action} · {row.subject}
               </li>

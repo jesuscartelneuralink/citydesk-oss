@@ -40,7 +40,7 @@ const EXPECTED = {
   VITE_NDU_ASSISTANT: null, // assistant stays off until its own review (Sun's call)
   VITE_NDU_IMMERSE: null, // default ON; only "off" would disable it — absence is correct
   VITE_NDU_GROUND: null, // env can only force OFF; absence = UI switch governs (correct at go-live)
-  VITE_COLONY_WORK_ENABLED: null, // colony work kill switch: default OFF; turning it on is Sun's call
+  VITE_COLONY_WORK_ENABLED: null, // never a client flag: the colony kill switch is the server env COLONY_WORK_ENABLED (default off)
 };
 
 function loadAppEnv() {
