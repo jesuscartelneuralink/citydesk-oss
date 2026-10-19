@@ -67,6 +67,11 @@ jobs:
         continue-on-error: true
         run: npm test
 
+      # Colony work system P0/P1: ledger, 1-cent rule, kill switch, watch-only addresses, audit, and the
+      # blocking no-key guard (fails if key or seed material or signing code appears in src/world/colony).
+      - name: Colony tests and no-key guard
+        run: npm run test:colony
+
       # NDU-AI: avatar-bot assistant (tool allowlist, moderation gate, memory, gateway policy, rate limits).
       - name: Assistant unit tests
         run: npm run test:assistant

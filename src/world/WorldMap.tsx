@@ -23,6 +23,7 @@ import { PlacesPanel } from "@/world/PlacesPanel";
 import { InsideView } from "@/world/empty-state/InsideView"; // NDU-UPG empty-state
 import { RobotCard } from "@/world/robotCard";
 import { getBot } from "@/world/robotLife";
+import { CivicTicker, ColonySheet } from "@/world/colony/ColonySheet";
 import { rulePlace, RuleStrip } from "@/world/ruleStrip";
 import { KitchenRoom } from "@/world/kitchen";
 import { StreetRoom } from "@/world/rooms";
@@ -92,6 +93,7 @@ export function WorldMap() {
   const [phone, setPhone] = useState(false);
   const [person, setPerson] = useState<Neighbor | null>(null);
   const [robot, setRobot] = useState("");
+  const [colony, setColony] = useState(false);
 
   useEffect(() => {
     if (person) rememberPerson(person.id, person.displayName);
@@ -563,6 +565,7 @@ export function WorldMap() {
       {/* NDU-UPG bubbles: compact top pill replaces the full top bar */}
       {bubbles ? <TopPill nearby={neighbors.length} onPhone={() => setPhone(true)} visible={visible} onVisible={() => setVisible((v) => !v)} places={places} /> : null}
       {/* NDU-UPG follow: compact rule bubble, top right under the pill (clear of the compass / N bubbles) */}
+      <CivicTicker onOpen={() => setColony(true)} />
       <div className="pointer-events-none absolute right-3 top-[4.6rem] z-[500] flex justify-end">
         <RuleStrip
           place={rulePlace({
@@ -601,6 +604,7 @@ export function WorldMap() {
           }}
         />
       ) : null}
+      {colony ? <ColonySheet onClose={() => setColony(false)} /> : null}
       {phone ? (
         <PhoneSheet
           neighbors={neighbors}

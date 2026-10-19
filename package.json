@@ -34,6 +34,7 @@
     "test:collide": "node --experimental-strip-types --test src/world/collide/*.test.ts src/world/empty-state/footprint.test.ts",
     "test:fp": "node --experimental-strip-types --test src/world/fp/fp.test.ts src/world/orbit/cameraOwner.test.ts src/world/audio/spatial.test.ts",
     "test:xr": "node --experimental-strip-types --test src/world/xr/xr.test.ts",
+    "test:colony": "node --experimental-strip-types --test src/world/colony/*.test.ts && node --test scripts/colony/no-keys.test.mjs",
     "test:gates": "node --experimental-strip-types --test src/world/gates/*.test.ts",
     "check:flags": "node scripts/check-flags.mjs"
   },
