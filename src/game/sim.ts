@@ -385,6 +385,12 @@ export function stepSim(dt: number, basis: Basis, move: { x: number; y: number }
   advanceMission();
 }
 
+/** A plate already paid in naira at the public stall. */
+export function eatPaidPlate(s: Sim = sim) {
+  s.needs.hunger = 100;
+  say(s, "The plate is paid. Eat.");
+}
+
 export function tryInteract() {
   const s = sim;
   if (s.phase !== "play" || s.phone) return;
