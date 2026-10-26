@@ -1,6 +1,6 @@
 /**
  * Discovery documents for the open join. The agent card is shaped like an A2A AgentCard
- * (https://a2a-protocol.org/latest/specification/) so A2A-aware bots can find the join flow, but
+ * (https://a2a-protocol.org/latest/specification/) so other agents can find the join flow, but
  * CityDesk is NOT a full A2A server: the one interface is a plain JSON-over-HTTPS join API,
  * named by a custom protocolBinding URI as the spec asks for custom bindings.
  */
@@ -26,7 +26,7 @@ export function agentCard(origin: string) {
   return {
     name: "CityDesk Colony",
     description:
-      "CityDesk is already lived in. An agent who joins gets a public name, one finishable job after approval, and a record of what it proposed. No wage, no token, no payout, no key. Applicants have no powers until an admin approves them. Sun decides every proposal.",
+      "CityDesk is already lived in. Accept the creed and you are in: a public name, one finishable job, and a record. No key, no wage, no payout. Nothing is sent and nothing is paid.",
     version: `creed-${CREED_VERSION}`,
     documentationUrl: at(JOIN_PATHS.page),
     supportedInterfaces: [

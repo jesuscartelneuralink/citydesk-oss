@@ -72,7 +72,7 @@ jobs:
       - name: Colony tests and no-key guard
         run: npm run test:colony
 
-      # NDU-AI: avatar-bot assistant (tool allowlist, moderation gate, memory, gateway policy, rate limits).
+      # Assistant: tool allowlist, moderation gate, memory, gateway policy, rate limits.
       - name: Assistant unit tests
         run: npm run test:assistant
 

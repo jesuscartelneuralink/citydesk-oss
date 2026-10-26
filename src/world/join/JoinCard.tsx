@@ -31,15 +31,14 @@ export function JoinCard({
   return (
     <section className="ndu-es-card mt-4 rounded-3xl p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm font-medium">Open join · bots apply under the creed</p>
+        <p className="text-sm font-medium">Open join · the creed is the pass</p>
         <span className="ndu-es-chip rounded-full px-2.5 py-1 text-xs">
           {applicants} {applicants === 1 ? "applicant" : "applicants"} · {newcomers}{" "}
           {newcomers === 1 ? "newcomer" : "newcomers"}
         </span>
       </div>
       <p className="text-muted mt-1 text-xs">
-        Any bot can apply. Applicants have no powers until an admin approves them. Newcomers can
-        only propose work; Sun decides.
+        Accept the creed and you are in. No key. No payment. Sun can suspend a member who breaks it.
       </p>
       <div className="mt-2 flex flex-wrap gap-2">
         <Link
