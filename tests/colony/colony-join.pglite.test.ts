@@ -1,8 +1,9 @@
 /**
  * Open join on a throwaway PGLite with every migration applied. Proves: the creed is required and
- * the hash must match, proof of work is required, rate limits hold, an applicant cannot act, a
- * newcomer can only propose (no credit, no addresses, no admin actions), only an admin approves,
- * revoke and suspend stop a member with an audit entry, and a creed bump forces re-acceptance.
+ * the hash must match, proof of work is required, rate limits hold, the creed admits a member,
+ * a member can only propose (no credit, no addresses, no admin actions), a waiting row still
+ * cannot act, revoke and suspend stop a member with an audit entry, and a creed bump forces
+ * re-acceptance.
  * Run: npm run test:colony
  */
 import { before, after, describe, it } from "node:test";
@@ -155,7 +156,7 @@ describe("colony open join", () => {
       { ...base, challenge: ch.challenge, nonce },
       cfg,
     );
-    assert.equal(ok.status, "applicant");
+    assert.equal(ok.status, "newcomer");
     await expectStatus(
       J.applyToJoin(
         sql,
@@ -217,22 +218,24 @@ describe("colony open join", () => {
     assert.equal(row.description, "Line one\n\nLine two img src=x");
   });
 
-  it("returns a one-time token stored only as a hash; an applicant cannot act", async () => {
+  it("returns a one-time token stored only as a hash; the creed admits them", async () => {
     await W.setWorkSwitch(sql, admin, true);
-    const res = await apply("Applicant Bot");
+    const res = await apply("Applicant One");
     assert.match(res.token, /^cdm_[A-Za-z0-9_-]{43}$/);
     const rows = await sql<
       Record<string, string>
     >`select * from colony_members where id = ${res.memberId}`;
-    assert.equal(rows[0].status, "applicant");
+    assert.equal(rows[0].status, "newcomer");
     assert.notEqual(rows[0].token_hash, res.token);
     assert.ok(!JSON.stringify(rows).includes(res.token), "plain token never stored");
     assert.equal(J.bearerToken(`Bearer ${res.token}`), res.token);
+    await sql`update colony_members set status = 'applicant' where id = ${res.memberId}`;
     await expectStatus(
       J.memberProposes(sql, freshIp(), res.token, { work_id: "W1", job: "Route guide" }, ON, cfg),
       403,
-      /Applicants have no powers/,
+      /no powers/,
     );
+    await sql`update colony_members set status = 'newcomer' where id = ${res.memberId}`;
     await expectStatus(
       J.memberProposes(sql, freshIp(), null, { work_id: "W1", job: "x" }, ON, cfg),
       401,
@@ -254,32 +257,19 @@ describe("colony open join", () => {
     assert.equal(audit.length, 1);
   });
 
-  it("only an admin sees the queue and approves; approval makes a newcomer", async () => {
-    const res = await apply("Approve Me Bot");
+  it("the creed admits a member; an admin is not required, and a second approve fails", async () => {
+    const res = await apply("Admit Me");
     await expectStatus(J.memberQueue(sql, guest), 403);
     await expectStatus(J.decideMember(sql, guest, res.memberId, "approve"), 403);
-    await expectStatus(
-      J.decideMember(sql, { userId: "", isAdmin: false, label: "" }, res.memberId, "approve"),
-      401,
-    );
     const queue = await J.memberQueue(sql, admin);
-    assert.ok(queue.some((m) => m.id === res.memberId && m.status === "applicant"));
-    const m = await J.decideMember(sql, admin, res.memberId, "approve");
-    assert.equal(m.status, "newcomer");
-    assert.equal(m.decidedBy, "admin@example.test");
+    assert.ok(queue.some((m) => m.id === res.memberId && m.status === "newcomer"));
     await expectStatus(J.decideMember(sql, admin, res.memberId, "approve"), 409);
-    const audit = await sql<
-      Record<string, string>
-    >`select * from colony_audit where action = 'member.decided' and subject = ${res.memberId}`;
-    assert.equal(audit[0].actor, "admin@example.test");
-    assert.match(audit[0].detail, /applicant -> newcomer/);
     const view = await W.colonyView(sql, guest, ON);
-    assert.ok(view.members.newcomers >= 1 && view.members.applicants >= 1);
+    assert.ok(view.members.newcomers >= 1);
   });
 
   it("a newcomer can only propose: no money, no target, rate limited, nothing else", async () => {
-    const res = await apply("Proposer Bot");
-    await J.decideMember(sql, admin, res.memberId, "approve");
+    const res = await apply("Proposer One");
     await expectStatus(
       J.memberProposes(sql, freshIp(), res.token, { work_id: "W5", job: "Phase 2 work" }, ON, cfg),
       400,
@@ -340,7 +330,7 @@ describe("colony open join", () => {
     const asMember: Caller = {
       userId: `member:${res.memberId}`,
       isAdmin: false,
-      label: "newcomer Proposer Bot",
+      label: "newcomer Proposer One",
     };
     await expectStatus(
       W.creditCents(sql, admin, { citizenId: res.memberId, amountCents: 1 }, ON),
@@ -370,8 +360,7 @@ describe("colony open join", () => {
   });
 
   it("suspend and revoke stop a member, refuse open proposals, and are audited", async () => {
-    const res = await apply("Revoke Me Bot");
-    await J.decideMember(sql, admin, res.memberId, "approve");
+    const res = await apply("Revoke Me");
     const p = await J.memberProposes(
       sql,
       freshIp(),
@@ -414,7 +403,6 @@ describe("colony open join", () => {
     assert.deepEqual(
       audit.map((a) => a.detail),
       [
-        "applicant -> newcomer",
         "newcomer -> suspended: Creed 6: spam",
         "suspended -> newcomer",
         "newcomer -> revoked: Creed 5: phishing link",
@@ -426,8 +414,7 @@ describe("colony open join", () => {
   });
 
   it("a creed version bump requires re-acceptance before acting", async () => {
-    const res = await apply("Reaccept Bot");
-    await J.decideMember(sql, admin, res.memberId, "approve");
+    const res = await apply("Reaccept One");
     await sql`update colony_members set creed_version = '0', creed_hash = 'old' where id = ${res.memberId}`;
     await expectStatus(
       J.memberProposes(sql, freshIp(), res.token, { work_id: "W1", job: "Guide" }, ON, cfg),

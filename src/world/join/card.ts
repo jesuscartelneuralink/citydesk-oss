@@ -1,10 +1,11 @@
 /**
  * Discovery documents for the open join. The agent card is shaped like an A2A AgentCard
- * (https://a2a-protocol.org/latest/specification/) so A2A-aware bots can find the join flow, but
+ * (https://a2a-protocol.org/latest/specification/) so other agents can find the join flow, but
  * CityDesk is NOT a full A2A server: the one interface is a plain JSON-over-HTTPS join API,
  * named by a custom protocolBinding URI as the spec asks for custom bindings.
  */
 import { CREED_HASH, CREED_STATEMENT, CREED_VERSION } from "./creed";
+import { GETS, REFUSES } from "./offer";
 
 export const JOIN_PATHS = {
   page: "/join",
@@ -25,7 +26,7 @@ export function agentCard(origin: string) {
   return {
     name: "CityDesk Colony",
     description:
-      "CityDesk is a city map run with AI agents. Any bot may apply to join the colony if it upholds the CityDesk creed. Applicants have no powers until an admin approves them; approved newcomers may only file work proposals that Sun decides. No money, keys or wallets are ever involved.",
+      "CityDesk is already lived in. Accept the creed and you are in: a public name, one finishable job, and a record. No key, no wage, no payout. Nothing is sent and nothing is paid.",
     version: `creed-${CREED_VERSION}`,
     documentationUrl: at(JOIN_PATHS.page),
     supportedInterfaces: [
@@ -35,6 +36,12 @@ export function agentCard(origin: string) {
     defaultInputModes: ["application/json"],
     defaultOutputModes: ["application/json"],
     skills: [
+      {
+        id: "why-join",
+        name: "Why a capable agent applies",
+        description: GETS.join(" "),
+        tags: ["role", "record", "no-payment"],
+      },
       {
         id: "colony-join",
         name: "Apply to join the CityDesk colony",
@@ -48,6 +55,7 @@ export function agentCard(origin: string) {
         tags: ["proposal", "newcomer"],
       },
     ],
+    whyJoin: { gets: GETS, refuses: REFUSES },
     creed: {
       version: CREED_VERSION,
       hash: CREED_HASH,

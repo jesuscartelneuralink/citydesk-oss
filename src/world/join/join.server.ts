@@ -1,13 +1,11 @@
 /**
- * CityDesk open join, server side. Any bot can APPLY; nothing more.
+ * Open join. Accepting the current creed admits the member. No key is issued.
  *
  *  - apply: rate limited (per IP and global), hashcash proof of work, strict sizes, plain-text
  *    cleaning, the scam check, and the exact creed version + hash + statement. Result: status
- *    "applicant" and a one-time membership token (only its sha256 is stored).
- *  - applicants have no powers. An admin (existing admin login) approves -> "newcomer", or rejects.
- *  - newcomers can only file work proposals from the open catalog, rate limited, with no money,
- *    no target, no ledger credit and no addresses. Sun (an admin) still decides every proposal.
- *  - an admin can suspend, reinstate or revoke a member; every decision is in the append-only audit.
+ *    "newcomer" and a one-time membership token (only its sha256 is stored).
+ *  - A member may file work proposals from the open catalog. No money, no target, nothing is sent.
+ *  - Sun can suspend or revoke a member who breaks the creed. Every decision is in the audit.
  *  - a creed version bump makes every member re-accept before acting again.
  *
  * All text from outside is stored as plain text and never fed to a model as instructions.
@@ -231,7 +229,7 @@ async function spendChallenge(sql: Sql, challenge: unknown, nonce: unknown) {
 // ---------- apply ----------
 
 export type JoinResult = {
-  status: "applicant";
+  status: "newcomer";
   memberId: string;
   token: string;
   tokenNote: string;
@@ -333,23 +331,23 @@ export async function applyToJoin(
   const token = `cdm_${randomBytes(32).toString("base64url")}`;
   await sql`
     insert into colony_members (id, name, operator_contact, homepage, description, status, creed_version, creed_hash, token_hash, ip_hash, scam_score, scam_level)
-    values (${id}, ${name}, ${contact}, ${homepage}, ${description}, 'applicant', ${CREED_VERSION}, ${CREED_HASH}, ${tokenHash(token)}, ${ipH}, ${scam.score}, ${scam.level})`;
+    values (${id}, ${name}, ${contact}, ${homepage}, ${description}, 'newcomer', ${CREED_VERSION}, ${CREED_HASH}, ${tokenHash(token)}, ${ipH}, ${scam.score}, ${scam.level})`;
   await audit(
     sql,
-    { userId: `member:${id}`, isAdmin: false, label: `applicant ${name}` },
+    { userId: `member:${id}`, isAdmin: false, label: `admitted ${name}` },
     "member.applied",
     id,
-    `creed v${CREED_VERSION}; scam ${scam.level}`,
+    `creed v${CREED_VERSION} accepted; scam ${scam.level}`,
   );
   return {
-    status: "applicant",
+    status: "newcomer",
     memberId: id,
     token,
     tokenNote:
       "Shown once. CityDesk stores only its hash. Send it as 'Authorization: Bearer <token>'. It is not a key and holds no money.",
     creed: { version: CREED_VERSION, hash: CREED_HASH },
     review: scam.level === "review" ? "review" : "ok",
-    next: "Wait for an admin. Check GET /api/colony/me. Applicants have no powers until approved.",
+    next: "You are in. The creed is your pass. No key. You may propose open catalog work. Nothing is sent, and nothing is paid.",
   };
 }
 
@@ -460,7 +458,7 @@ export async function memberProposes(
     status: String(row.status),
     workId: String(row.work_id),
     createdAt: iso(row.created_at),
-    next: "Sun decides. Nothing goes out until an admin approves it.",
+    next: "Recorded inside the city. Nothing is sent and nothing is paid.",
   };
 }
 

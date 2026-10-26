@@ -70,6 +70,7 @@ export function PhoneSheet({
   const [page, setPage] = useState<"home" | AppId | "store">("home");
   const [met, setMet] = useState<Met[]>([]);
   const [installed, setInstalled] = useState<AppId[]>(["messages", "places"]);
+  const [stallNote, setStallNote] = useState("");
   const now = new Date();
   const nearby = new Set(neighbors.map((person) => person.id));
 
@@ -181,6 +182,27 @@ export function PhoneSheet({
             ).map(([label, value]) => (
               <li key={label} className="bg-bg rounded-2xl px-3 py-3 text-sm">
                 {label} · {Math.round(value)}
+                {label === "Food" ? (
+                  <div className="mt-2">
+                    <button
+                      type="button"
+                      className="bg-accent text-bg min-h-11 rounded-full px-3 text-xs font-semibold"
+                      onClick={() => {
+                        setStallNote("Opening the till…");
+                        void fetch("/api/stall/meal", { method: "POST", credentials: "include" })
+                          .then((res) => res.json())
+                          .then((body: { url?: string; error?: string }) => {
+                            if (body.url) window.location.assign(body.url);
+                            else setStallNote(body.error || "The till did not open.");
+                          })
+                          .catch(() => setStallNote("The till could not be reached."));
+                      }}
+                    >
+                      Pay ₦1,500 for a plate
+                    </button>
+                    {stallNote ? <p className="text-muted mt-1 text-xs">{stallNote}</p> : null}
+                  </div>
+                ) : null}
               </li>
             ))}
           </ul>

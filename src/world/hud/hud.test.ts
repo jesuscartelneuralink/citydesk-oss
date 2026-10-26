@@ -114,7 +114,6 @@ describe("hotkeys", () => {
     // Simulate minimal globalThis.window for Node
     const listeners: ((e: KeyboardEvent) => void)[] = [];
     const origWindow = globalThis.window;
-    // @ts-ignore — minimal mock
     globalThis.window = {
       addEventListener: ((_: string, fn: (e: KeyboardEvent) => void) => listeners.push(fn)) as any,
       removeEventListener: () => {},
@@ -147,7 +146,6 @@ describe("hotkeys", () => {
     assert.equal(hudToggled, 2, "Should not fire inside INPUT");
 
     unbind();
-    // @ts-ignore
     globalThis.window = origWindow;
   });
 });

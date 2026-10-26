@@ -259,8 +259,8 @@ export function resolve(x: number, z: number, radius = PLAYER_R) {
     for (const b of boxes) {
       const cx = Math.min(Math.max(px, b.minX), b.maxX);
       const cz = Math.min(Math.max(pz, b.minZ), b.maxZ);
-      let dx = px - cx;
-      let dz = pz - cz;
+      const dx = px - cx;
+      const dz = pz - cz;
       const d2 = dx * dx + dz * dz;
       if (d2 < radius * radius) {
         if (d2 > 1e-8) {
@@ -383,6 +383,12 @@ export function stepSim(dt: number, basis: Basis, move: { x: number; y: number }
     }
   }
   advanceMission();
+}
+
+/** A plate already paid in naira at the public stall. */
+export function eatPaidPlate(s: Sim = sim) {
+  s.needs.hunger = 100;
+  say(s, "The plate is paid. Eat.");
 }
 
 export function tryInteract() {
