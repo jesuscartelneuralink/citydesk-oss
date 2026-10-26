@@ -32,6 +32,7 @@ import { Route as ApiColonyProposeRouteImport } from './routes/api/colony/propos
 import { Route as ApiColonyReacceptRouteImport } from './routes/api/colony/reaccept';
 import { Route as ApiPropertyEvidenceRouteImport } from './routes/api/property/evidence';
 import { Route as ApiScansIdRouteImport } from './routes/api/scans.$id';
+import { Route as ApiStallCryptoRouteImport } from './routes/api/stall/crypto';
 import { Route as ApiStallMealRouteImport } from './routes/api/stall/meal';
 import { Route as ApiStallWebhookRouteImport } from './routes/api/stall/webhook';
 import { Route as ApiPropertyEvidenceIdRouteImport } from './routes/api/property/evidence.$id';
@@ -154,6 +155,11 @@ const ApiScansIdRoute = ApiScansIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ApiScansRoute,
 } as any);
+const ApiStallCryptoRoute = ApiStallCryptoRouteImport.update({
+  id: '/api/stall/crypto',
+  path: '/api/stall/crypto',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const ApiStallMealRoute = ApiStallMealRouteImport.update({
   id: '/api/stall/meal',
   path: '/api/stall/meal',
@@ -199,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/api/colony/reaccept': typeof ApiColonyReacceptRoute;
   '/api/property/evidence': typeof ApiPropertyEvidenceRouteWithChildren;
   '/api/scans/$id': typeof ApiScansIdRoute;
+  '/api/stall/crypto': typeof ApiStallCryptoRoute;
   '/api/stall/meal': typeof ApiStallMealRoute;
   '/api/stall/webhook': typeof ApiStallWebhookRoute;
   '/api/property/evidence/$id': typeof ApiPropertyEvidenceIdRoute;
@@ -228,6 +235,7 @@ export interface FileRoutesByTo {
   '/api/colony/reaccept': typeof ApiColonyReacceptRoute;
   '/api/property/evidence': typeof ApiPropertyEvidenceRouteWithChildren;
   '/api/scans/$id': typeof ApiScansIdRoute;
+  '/api/stall/crypto': typeof ApiStallCryptoRoute;
   '/api/stall/meal': typeof ApiStallMealRoute;
   '/api/stall/webhook': typeof ApiStallWebhookRoute;
   '/api/property/evidence/$id': typeof ApiPropertyEvidenceIdRoute;
@@ -258,6 +266,7 @@ export interface FileRoutesById {
   '/api/colony/reaccept': typeof ApiColonyReacceptRoute;
   '/api/property/evidence': typeof ApiPropertyEvidenceRouteWithChildren;
   '/api/scans/$id': typeof ApiScansIdRoute;
+  '/api/stall/crypto': typeof ApiStallCryptoRoute;
   '/api/stall/meal': typeof ApiStallMealRoute;
   '/api/stall/webhook': typeof ApiStallWebhookRoute;
   '/api/property/evidence/$id': typeof ApiPropertyEvidenceIdRoute;
@@ -289,6 +298,7 @@ export interface FileRouteTypes {
     | '/api/colony/reaccept'
     | '/api/property/evidence'
     | '/api/scans/$id'
+    | '/api/stall/crypto'
     | '/api/stall/meal'
     | '/api/stall/webhook'
     | '/api/property/evidence/$id'
@@ -318,6 +328,7 @@ export interface FileRouteTypes {
     | '/api/colony/reaccept'
     | '/api/property/evidence'
     | '/api/scans/$id'
+    | '/api/stall/crypto'
     | '/api/stall/meal'
     | '/api/stall/webhook'
     | '/api/property/evidence/$id'
@@ -347,6 +358,7 @@ export interface FileRouteTypes {
     | '/api/colony/reaccept'
     | '/api/property/evidence'
     | '/api/scans/$id'
+    | '/api/stall/crypto'
     | '/api/stall/meal'
     | '/api/stall/webhook'
     | '/api/property/evidence/$id'
@@ -376,6 +388,7 @@ export interface RootRouteChildren {
   ApiColonyProposeRoute: typeof ApiColonyProposeRoute;
   ApiColonyReacceptRoute: typeof ApiColonyReacceptRoute;
   ApiPropertyEvidenceRoute: typeof ApiPropertyEvidenceRouteWithChildren;
+  ApiStallCryptoRoute: typeof ApiStallCryptoRoute;
   ApiStallMealRoute: typeof ApiStallMealRoute;
   ApiStallWebhookRoute: typeof ApiStallWebhookRoute;
   ApiPropertyMetaHashRoute: typeof ApiPropertyMetaHashRoute;
@@ -544,6 +557,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiScansIdRouteImport;
       parentRoute: typeof ApiScansRoute;
     };
+    '/api/stall/crypto': {
+      id: '/api/stall/crypto';
+      path: '/api/stall/crypto';
+      fullPath: '/api/stall/crypto';
+      preLoaderRoute: typeof ApiStallCryptoRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api/stall/meal': {
       id: '/api/stall/meal';
       path: '/api/stall/meal';
@@ -621,6 +641,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiColonyProposeRoute: ApiColonyProposeRoute,
   ApiColonyReacceptRoute: ApiColonyReacceptRoute,
   ApiPropertyEvidenceRoute: ApiPropertyEvidenceRouteWithChildren,
+  ApiStallCryptoRoute: ApiStallCryptoRoute,
   ApiStallMealRoute: ApiStallMealRoute,
   ApiStallWebhookRoute: ApiStallWebhookRoute,
   ApiPropertyMetaHashRoute: ApiPropertyMetaHashRoute,
