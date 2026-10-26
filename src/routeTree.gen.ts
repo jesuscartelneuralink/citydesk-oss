@@ -8,236 +8,263 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as BlockRouteImport } from './routes/block'
-import { Route as JoinRouteImport } from './routes/join'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as MapRouteImport } from './routes/map'
-import { Route as DotwellKnownAgentCardDotjsonRouteImport } from './routes/[.]well-known.agent-card[.]json'
-import { Route as DotwellKnownAgentDotjsonRouteImport } from './routes/[.]well-known.agent[.]json'
-import { Route as AccountSessionsRouteImport } from './routes/account.sessions'
-import { Route as AdminSessionsRouteImport } from './routes/admin_.sessions'
-import { Route as ApiAssistantRouteImport } from './routes/api/assistant'
-import { Route as ApiScansRouteImport } from './routes/api/scans'
-import { Route as ApiTripRouteRouteImport } from './routes/api/trip-route'
-import { Route as JoinCreedDotjsonRouteImport } from './routes/join_.creed[.]json'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as ApiColonyChallengeRouteImport } from './routes/api/colony/challenge'
-import { Route as ApiColonyJoinRouteImport } from './routes/api/colony/join'
-import { Route as ApiColonyMeRouteImport } from './routes/api/colony/me'
-import { Route as ApiColonyProposeRouteImport } from './routes/api/colony/propose'
-import { Route as ApiColonyReacceptRouteImport } from './routes/api/colony/reaccept'
-import { Route as ApiPropertyEvidenceRouteImport } from './routes/api/property/evidence'
-import { Route as ApiScansIdRouteImport } from './routes/api/scans.$id'
-import { Route as ApiPropertyEvidenceIdRouteImport } from './routes/api/property/evidence.$id'
-import { Route as ApiPropertyMetaHashRouteImport } from './routes/api/property/meta.$hash'
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as IndexRouteImport } from './routes/index';
+import { Route as AdminRouteImport } from './routes/admin';
+import { Route as BlockRouteImport } from './routes/block';
+import { Route as JoinRouteImport } from './routes/join';
+import { Route as LoginRouteImport } from './routes/login';
+import { Route as MapRouteImport } from './routes/map';
+import { Route as DotwellKnownAgentCardDotjsonRouteImport } from './routes/[.]well-known.agent-card[.]json';
+import { Route as DotwellKnownAgentDotjsonRouteImport } from './routes/[.]well-known.agent[.]json';
+import { Route as AccountSessionsRouteImport } from './routes/account.sessions';
+import { Route as AdminSessionsRouteImport } from './routes/admin_.sessions';
+import { Route as ApiAssistantRouteImport } from './routes/api/assistant';
+import { Route as ApiScansRouteImport } from './routes/api/scans';
+import { Route as ApiTripRouteRouteImport } from './routes/api/trip-route';
+import { Route as JoinCreedDotjsonRouteImport } from './routes/join_.creed[.]json';
+import { Route as StallPaidRouteImport } from './routes/stall.paid';
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$';
+import { Route as ApiColonyChallengeRouteImport } from './routes/api/colony/challenge';
+import { Route as ApiColonyJoinRouteImport } from './routes/api/colony/join';
+import { Route as ApiColonyMeRouteImport } from './routes/api/colony/me';
+import { Route as ApiColonyProposeRouteImport } from './routes/api/colony/propose';
+import { Route as ApiColonyReacceptRouteImport } from './routes/api/colony/reaccept';
+import { Route as ApiPropertyEvidenceRouteImport } from './routes/api/property/evidence';
+import { Route as ApiScansIdRouteImport } from './routes/api/scans.$id';
+import { Route as ApiStallMealRouteImport } from './routes/api/stall/meal';
+import { Route as ApiStallWebhookRouteImport } from './routes/api/stall/webhook';
+import { Route as ApiPropertyEvidenceIdRouteImport } from './routes/api/property/evidence.$id';
+import { Route as ApiPropertyMetaHashRouteImport } from './routes/api/property/meta.$hash';
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const BlockRoute = BlockRouteImport.update({
   id: '/block',
   path: '/block',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const JoinRoute = JoinRouteImport.update({
   id: '/join',
   path: '/join',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const MapRoute = MapRouteImport.update({
   id: '/map',
   path: '/map',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const DotwellKnownAgentCardDotjsonRoute =
   DotwellKnownAgentCardDotjsonRouteImport.update({
     id: '/.well-known/agent-card.json',
     path: '/.well-known/agent-card.json',
     getParentRoute: () => rootRouteImport,
-  } as any)
+  } as any);
 const DotwellKnownAgentDotjsonRoute =
   DotwellKnownAgentDotjsonRouteImport.update({
     id: '/.well-known/agent.json',
     path: '/.well-known/agent.json',
     getParentRoute: () => rootRouteImport,
-  } as any)
+  } as any);
 const AccountSessionsRoute = AccountSessionsRouteImport.update({
   id: '/account/sessions',
   path: '/account/sessions',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AdminSessionsRoute = AdminSessionsRouteImport.update({
   id: '/admin_/sessions',
   path: '/admin/sessions',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiAssistantRoute = ApiAssistantRouteImport.update({
   id: '/api/assistant',
   path: '/api/assistant',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiScansRoute = ApiScansRouteImport.update({
   id: '/api/scans',
   path: '/api/scans',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiTripRouteRoute = ApiTripRouteRouteImport.update({
   id: '/api/trip-route',
   path: '/api/trip-route',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const JoinCreedDotjsonRoute = JoinCreedDotjsonRouteImport.update({
   id: '/join_/creed.json',
   path: '/join/creed.json',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
+const StallPaidRoute = StallPaidRouteImport.update({
+  id: '/stall/paid',
+  path: '/stall/paid',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiColonyChallengeRoute = ApiColonyChallengeRouteImport.update({
   id: '/api/colony/challenge',
   path: '/api/colony/challenge',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiColonyJoinRoute = ApiColonyJoinRouteImport.update({
   id: '/api/colony/join',
   path: '/api/colony/join',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiColonyMeRoute = ApiColonyMeRouteImport.update({
   id: '/api/colony/me',
   path: '/api/colony/me',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiColonyProposeRoute = ApiColonyProposeRouteImport.update({
   id: '/api/colony/propose',
   path: '/api/colony/propose',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiColonyReacceptRoute = ApiColonyReacceptRouteImport.update({
   id: '/api/colony/reaccept',
   path: '/api/colony/reaccept',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiPropertyEvidenceRoute = ApiPropertyEvidenceRouteImport.update({
   id: '/api/property/evidence',
   path: '/api/property/evidence',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiScansIdRoute = ApiScansIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => ApiScansRoute,
-} as any)
+} as any);
+const ApiStallMealRoute = ApiStallMealRouteImport.update({
+  id: '/api/stall/meal',
+  path: '/api/stall/meal',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const ApiStallWebhookRoute = ApiStallWebhookRouteImport.update({
+  id: '/api/stall/webhook',
+  path: '/api/stall/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const ApiPropertyEvidenceIdRoute = ApiPropertyEvidenceIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => ApiPropertyEvidenceRoute,
-} as any)
+} as any);
 const ApiPropertyMetaHashRoute = ApiPropertyMetaHashRouteImport.update({
   id: '/api/property/meta/$hash',
   path: '/api/property/meta/$hash',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
-  '/block': typeof BlockRoute
-  '/join': typeof JoinRoute
-  '/login': typeof LoginRoute
-  '/map': typeof MapRoute
-  '/.well-known/agent-card.json': typeof DotwellKnownAgentCardDotjsonRoute
-  '/.well-known/agent.json': typeof DotwellKnownAgentDotjsonRoute
-  '/account/sessions': typeof AccountSessionsRoute
-  '/admin/sessions': typeof AdminSessionsRoute
-  '/api/assistant': typeof ApiAssistantRoute
-  '/api/scans': typeof ApiScansRouteWithChildren
-  '/api/trip-route': typeof ApiTripRouteRoute
-  '/join/creed.json': typeof JoinCreedDotjsonRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/colony/challenge': typeof ApiColonyChallengeRoute
-  '/api/colony/join': typeof ApiColonyJoinRoute
-  '/api/colony/me': typeof ApiColonyMeRoute
-  '/api/colony/propose': typeof ApiColonyProposeRoute
-  '/api/colony/reaccept': typeof ApiColonyReacceptRoute
-  '/api/property/evidence': typeof ApiPropertyEvidenceRouteWithChildren
-  '/api/scans/$id': typeof ApiScansIdRoute
-  '/api/property/evidence/$id': typeof ApiPropertyEvidenceIdRoute
-  '/api/property/meta/$hash': typeof ApiPropertyMetaHashRoute
+  '/': typeof IndexRoute;
+  '/admin': typeof AdminRoute;
+  '/block': typeof BlockRoute;
+  '/join': typeof JoinRoute;
+  '/login': typeof LoginRoute;
+  '/map': typeof MapRoute;
+  '/.well-known/agent-card.json': typeof DotwellKnownAgentCardDotjsonRoute;
+  '/.well-known/agent.json': typeof DotwellKnownAgentDotjsonRoute;
+  '/account/sessions': typeof AccountSessionsRoute;
+  '/admin/sessions': typeof AdminSessionsRoute;
+  '/api/assistant': typeof ApiAssistantRoute;
+  '/api/scans': typeof ApiScansRouteWithChildren;
+  '/api/trip-route': typeof ApiTripRouteRoute;
+  '/join/creed.json': typeof JoinCreedDotjsonRoute;
+  '/stall/paid': typeof StallPaidRoute;
+  '/api/auth/$': typeof ApiAuthSplatRoute;
+  '/api/colony/challenge': typeof ApiColonyChallengeRoute;
+  '/api/colony/join': typeof ApiColonyJoinRoute;
+  '/api/colony/me': typeof ApiColonyMeRoute;
+  '/api/colony/propose': typeof ApiColonyProposeRoute;
+  '/api/colony/reaccept': typeof ApiColonyReacceptRoute;
+  '/api/property/evidence': typeof ApiPropertyEvidenceRouteWithChildren;
+  '/api/scans/$id': typeof ApiScansIdRoute;
+  '/api/stall/meal': typeof ApiStallMealRoute;
+  '/api/stall/webhook': typeof ApiStallWebhookRoute;
+  '/api/property/evidence/$id': typeof ApiPropertyEvidenceIdRoute;
+  '/api/property/meta/$hash': typeof ApiPropertyMetaHashRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
-  '/block': typeof BlockRoute
-  '/join': typeof JoinRoute
-  '/login': typeof LoginRoute
-  '/map': typeof MapRoute
-  '/.well-known/agent-card.json': typeof DotwellKnownAgentCardDotjsonRoute
-  '/.well-known/agent.json': typeof DotwellKnownAgentDotjsonRoute
-  '/account/sessions': typeof AccountSessionsRoute
-  '/admin/sessions': typeof AdminSessionsRoute
-  '/api/assistant': typeof ApiAssistantRoute
-  '/api/scans': typeof ApiScansRouteWithChildren
-  '/api/trip-route': typeof ApiTripRouteRoute
-  '/join/creed.json': typeof JoinCreedDotjsonRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/colony/challenge': typeof ApiColonyChallengeRoute
-  '/api/colony/join': typeof ApiColonyJoinRoute
-  '/api/colony/me': typeof ApiColonyMeRoute
-  '/api/colony/propose': typeof ApiColonyProposeRoute
-  '/api/colony/reaccept': typeof ApiColonyReacceptRoute
-  '/api/property/evidence': typeof ApiPropertyEvidenceRouteWithChildren
-  '/api/scans/$id': typeof ApiScansIdRoute
-  '/api/property/evidence/$id': typeof ApiPropertyEvidenceIdRoute
-  '/api/property/meta/$hash': typeof ApiPropertyMetaHashRoute
+  '/': typeof IndexRoute;
+  '/admin': typeof AdminRoute;
+  '/block': typeof BlockRoute;
+  '/join': typeof JoinRoute;
+  '/login': typeof LoginRoute;
+  '/map': typeof MapRoute;
+  '/.well-known/agent-card.json': typeof DotwellKnownAgentCardDotjsonRoute;
+  '/.well-known/agent.json': typeof DotwellKnownAgentDotjsonRoute;
+  '/account/sessions': typeof AccountSessionsRoute;
+  '/admin/sessions': typeof AdminSessionsRoute;
+  '/api/assistant': typeof ApiAssistantRoute;
+  '/api/scans': typeof ApiScansRouteWithChildren;
+  '/api/trip-route': typeof ApiTripRouteRoute;
+  '/join/creed.json': typeof JoinCreedDotjsonRoute;
+  '/stall/paid': typeof StallPaidRoute;
+  '/api/auth/$': typeof ApiAuthSplatRoute;
+  '/api/colony/challenge': typeof ApiColonyChallengeRoute;
+  '/api/colony/join': typeof ApiColonyJoinRoute;
+  '/api/colony/me': typeof ApiColonyMeRoute;
+  '/api/colony/propose': typeof ApiColonyProposeRoute;
+  '/api/colony/reaccept': typeof ApiColonyReacceptRoute;
+  '/api/property/evidence': typeof ApiPropertyEvidenceRouteWithChildren;
+  '/api/scans/$id': typeof ApiScansIdRoute;
+  '/api/stall/meal': typeof ApiStallMealRoute;
+  '/api/stall/webhook': typeof ApiStallWebhookRoute;
+  '/api/property/evidence/$id': typeof ApiPropertyEvidenceIdRoute;
+  '/api/property/meta/$hash': typeof ApiPropertyMetaHashRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
-  '/block': typeof BlockRoute
-  '/join': typeof JoinRoute
-  '/login': typeof LoginRoute
-  '/map': typeof MapRoute
-  '/.well-known/agent-card.json': typeof DotwellKnownAgentCardDotjsonRoute
-  '/.well-known/agent.json': typeof DotwellKnownAgentDotjsonRoute
-  '/account/sessions': typeof AccountSessionsRoute
-  '/admin_/sessions': typeof AdminSessionsRoute
-  '/api/assistant': typeof ApiAssistantRoute
-  '/api/scans': typeof ApiScansRouteWithChildren
-  '/api/trip-route': typeof ApiTripRouteRoute
-  '/join_/creed.json': typeof JoinCreedDotjsonRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/colony/challenge': typeof ApiColonyChallengeRoute
-  '/api/colony/join': typeof ApiColonyJoinRoute
-  '/api/colony/me': typeof ApiColonyMeRoute
-  '/api/colony/propose': typeof ApiColonyProposeRoute
-  '/api/colony/reaccept': typeof ApiColonyReacceptRoute
-  '/api/property/evidence': typeof ApiPropertyEvidenceRouteWithChildren
-  '/api/scans/$id': typeof ApiScansIdRoute
-  '/api/property/evidence/$id': typeof ApiPropertyEvidenceIdRoute
-  '/api/property/meta/$hash': typeof ApiPropertyMetaHashRoute
+  __root__: typeof rootRouteImport;
+  '/': typeof IndexRoute;
+  '/admin': typeof AdminRoute;
+  '/block': typeof BlockRoute;
+  '/join': typeof JoinRoute;
+  '/login': typeof LoginRoute;
+  '/map': typeof MapRoute;
+  '/.well-known/agent-card.json': typeof DotwellKnownAgentCardDotjsonRoute;
+  '/.well-known/agent.json': typeof DotwellKnownAgentDotjsonRoute;
+  '/account/sessions': typeof AccountSessionsRoute;
+  '/admin_/sessions': typeof AdminSessionsRoute;
+  '/api/assistant': typeof ApiAssistantRoute;
+  '/api/scans': typeof ApiScansRouteWithChildren;
+  '/api/trip-route': typeof ApiTripRouteRoute;
+  '/join_/creed.json': typeof JoinCreedDotjsonRoute;
+  '/stall/paid': typeof StallPaidRoute;
+  '/api/auth/$': typeof ApiAuthSplatRoute;
+  '/api/colony/challenge': typeof ApiColonyChallengeRoute;
+  '/api/colony/join': typeof ApiColonyJoinRoute;
+  '/api/colony/me': typeof ApiColonyMeRoute;
+  '/api/colony/propose': typeof ApiColonyProposeRoute;
+  '/api/colony/reaccept': typeof ApiColonyReacceptRoute;
+  '/api/property/evidence': typeof ApiPropertyEvidenceRouteWithChildren;
+  '/api/scans/$id': typeof ApiScansIdRoute;
+  '/api/stall/meal': typeof ApiStallMealRoute;
+  '/api/stall/webhook': typeof ApiStallWebhookRoute;
+  '/api/property/evidence/$id': typeof ApiPropertyEvidenceIdRoute;
+  '/api/property/meta/$hash': typeof ApiPropertyMetaHashRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
     | '/'
     | '/admin'
@@ -253,6 +280,7 @@ export interface FileRouteTypes {
     | '/api/scans'
     | '/api/trip-route'
     | '/join/creed.json'
+    | '/stall/paid'
     | '/api/auth/$'
     | '/api/colony/challenge'
     | '/api/colony/join'
@@ -261,9 +289,11 @@ export interface FileRouteTypes {
     | '/api/colony/reaccept'
     | '/api/property/evidence'
     | '/api/scans/$id'
+    | '/api/stall/meal'
+    | '/api/stall/webhook'
     | '/api/property/evidence/$id'
-    | '/api/property/meta/$hash'
-  fileRoutesByTo: FileRoutesByTo
+    | '/api/property/meta/$hash';
+  fileRoutesByTo: FileRoutesByTo;
   to:
     | '/'
     | '/admin'
@@ -279,6 +309,7 @@ export interface FileRouteTypes {
     | '/api/scans'
     | '/api/trip-route'
     | '/join/creed.json'
+    | '/stall/paid'
     | '/api/auth/$'
     | '/api/colony/challenge'
     | '/api/colony/join'
@@ -287,8 +318,10 @@ export interface FileRouteTypes {
     | '/api/colony/reaccept'
     | '/api/property/evidence'
     | '/api/scans/$id'
+    | '/api/stall/meal'
+    | '/api/stall/webhook'
     | '/api/property/evidence/$id'
-    | '/api/property/meta/$hash'
+    | '/api/property/meta/$hash';
   id:
     | '__root__'
     | '/'
@@ -305,6 +338,7 @@ export interface FileRouteTypes {
     | '/api/scans'
     | '/api/trip-route'
     | '/join_/creed.json'
+    | '/stall/paid'
     | '/api/auth/$'
     | '/api/colony/challenge'
     | '/api/colony/join'
@@ -313,230 +347,256 @@ export interface FileRouteTypes {
     | '/api/colony/reaccept'
     | '/api/property/evidence'
     | '/api/scans/$id'
+    | '/api/stall/meal'
+    | '/api/stall/webhook'
     | '/api/property/evidence/$id'
-    | '/api/property/meta/$hash'
-  fileRoutesById: FileRoutesById
+    | '/api/property/meta/$hash';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
-  BlockRoute: typeof BlockRoute
-  JoinRoute: typeof JoinRoute
-  LoginRoute: typeof LoginRoute
-  MapRoute: typeof MapRoute
-  DotwellKnownAgentCardDotjsonRoute: typeof DotwellKnownAgentCardDotjsonRoute
-  DotwellKnownAgentDotjsonRoute: typeof DotwellKnownAgentDotjsonRoute
-  AccountSessionsRoute: typeof AccountSessionsRoute
-  AdminSessionsRoute: typeof AdminSessionsRoute
-  ApiAssistantRoute: typeof ApiAssistantRoute
-  ApiScansRoute: typeof ApiScansRouteWithChildren
-  ApiTripRouteRoute: typeof ApiTripRouteRoute
-  JoinCreedDotjsonRoute: typeof JoinCreedDotjsonRoute
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
-  ApiColonyChallengeRoute: typeof ApiColonyChallengeRoute
-  ApiColonyJoinRoute: typeof ApiColonyJoinRoute
-  ApiColonyMeRoute: typeof ApiColonyMeRoute
-  ApiColonyProposeRoute: typeof ApiColonyProposeRoute
-  ApiColonyReacceptRoute: typeof ApiColonyReacceptRoute
-  ApiPropertyEvidenceRoute: typeof ApiPropertyEvidenceRouteWithChildren
-  ApiPropertyMetaHashRoute: typeof ApiPropertyMetaHashRoute
+  IndexRoute: typeof IndexRoute;
+  AdminRoute: typeof AdminRoute;
+  BlockRoute: typeof BlockRoute;
+  JoinRoute: typeof JoinRoute;
+  LoginRoute: typeof LoginRoute;
+  MapRoute: typeof MapRoute;
+  DotwellKnownAgentCardDotjsonRoute: typeof DotwellKnownAgentCardDotjsonRoute;
+  DotwellKnownAgentDotjsonRoute: typeof DotwellKnownAgentDotjsonRoute;
+  AccountSessionsRoute: typeof AccountSessionsRoute;
+  AdminSessionsRoute: typeof AdminSessionsRoute;
+  ApiAssistantRoute: typeof ApiAssistantRoute;
+  ApiScansRoute: typeof ApiScansRouteWithChildren;
+  ApiTripRouteRoute: typeof ApiTripRouteRoute;
+  JoinCreedDotjsonRoute: typeof JoinCreedDotjsonRoute;
+  StallPaidRoute: typeof StallPaidRoute;
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
+  ApiColonyChallengeRoute: typeof ApiColonyChallengeRoute;
+  ApiColonyJoinRoute: typeof ApiColonyJoinRoute;
+  ApiColonyMeRoute: typeof ApiColonyMeRoute;
+  ApiColonyProposeRoute: typeof ApiColonyProposeRoute;
+  ApiColonyReacceptRoute: typeof ApiColonyReacceptRoute;
+  ApiPropertyEvidenceRoute: typeof ApiPropertyEvidenceRouteWithChildren;
+  ApiStallMealRoute: typeof ApiStallMealRoute;
+  ApiStallWebhookRoute: typeof ApiStallWebhookRoute;
+  ApiPropertyMetaHashRoute: typeof ApiPropertyMetaHashRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/admin';
+      path: '/admin';
+      fullPath: '/admin';
+      preLoaderRoute: typeof AdminRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/block': {
-      id: '/block'
-      path: '/block'
-      fullPath: '/block'
-      preLoaderRoute: typeof BlockRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/block';
+      path: '/block';
+      fullPath: '/block';
+      preLoaderRoute: typeof BlockRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/join': {
-      id: '/join'
-      path: '/join'
-      fullPath: '/join'
-      preLoaderRoute: typeof JoinRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/join';
+      path: '/join';
+      fullPath: '/join';
+      preLoaderRoute: typeof JoinRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof LoginRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/map': {
-      id: '/map'
-      path: '/map'
-      fullPath: '/map'
-      preLoaderRoute: typeof MapRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/map';
+      path: '/map';
+      fullPath: '/map';
+      preLoaderRoute: typeof MapRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/.well-known/agent-card.json': {
-      id: '/.well-known/agent-card.json'
-      path: '/.well-known/agent-card.json'
-      fullPath: '/.well-known/agent-card.json'
-      preLoaderRoute: typeof DotwellKnownAgentCardDotjsonRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/.well-known/agent-card.json';
+      path: '/.well-known/agent-card.json';
+      fullPath: '/.well-known/agent-card.json';
+      preLoaderRoute: typeof DotwellKnownAgentCardDotjsonRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/.well-known/agent.json': {
-      id: '/.well-known/agent.json'
-      path: '/.well-known/agent.json'
-      fullPath: '/.well-known/agent.json'
-      preLoaderRoute: typeof DotwellKnownAgentDotjsonRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/.well-known/agent.json';
+      path: '/.well-known/agent.json';
+      fullPath: '/.well-known/agent.json';
+      preLoaderRoute: typeof DotwellKnownAgentDotjsonRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/account/sessions': {
-      id: '/account/sessions'
-      path: '/account/sessions'
-      fullPath: '/account/sessions'
-      preLoaderRoute: typeof AccountSessionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/account/sessions';
+      path: '/account/sessions';
+      fullPath: '/account/sessions';
+      preLoaderRoute: typeof AccountSessionsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/admin_/sessions': {
-      id: '/admin_/sessions'
-      path: '/admin/sessions'
-      fullPath: '/admin/sessions'
-      preLoaderRoute: typeof AdminSessionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/admin_/sessions';
+      path: '/admin/sessions';
+      fullPath: '/admin/sessions';
+      preLoaderRoute: typeof AdminSessionsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api/assistant': {
-      id: '/api/assistant'
-      path: '/api/assistant'
-      fullPath: '/api/assistant'
-      preLoaderRoute: typeof ApiAssistantRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/api/assistant';
+      path: '/api/assistant';
+      fullPath: '/api/assistant';
+      preLoaderRoute: typeof ApiAssistantRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api/scans': {
-      id: '/api/scans'
-      path: '/api/scans'
-      fullPath: '/api/scans'
-      preLoaderRoute: typeof ApiScansRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/api/scans';
+      path: '/api/scans';
+      fullPath: '/api/scans';
+      preLoaderRoute: typeof ApiScansRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api/trip-route': {
-      id: '/api/trip-route'
-      path: '/api/trip-route'
-      fullPath: '/api/trip-route'
-      preLoaderRoute: typeof ApiTripRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/api/trip-route';
+      path: '/api/trip-route';
+      fullPath: '/api/trip-route';
+      preLoaderRoute: typeof ApiTripRouteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/join_/creed.json': {
-      id: '/join_/creed.json'
-      path: '/join/creed.json'
-      fullPath: '/join/creed.json'
-      preLoaderRoute: typeof JoinCreedDotjsonRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/join_/creed.json';
+      path: '/join/creed.json';
+      fullPath: '/join/creed.json';
+      preLoaderRoute: typeof JoinCreedDotjsonRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/stall/paid': {
+      id: '/stall/paid';
+      path: '/stall/paid';
+      fullPath: '/stall/paid';
+      preLoaderRoute: typeof StallPaidRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/api/auth/$';
+      path: '/api/auth/$';
+      fullPath: '/api/auth/$';
+      preLoaderRoute: typeof ApiAuthSplatRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api/colony/challenge': {
-      id: '/api/colony/challenge'
-      path: '/api/colony/challenge'
-      fullPath: '/api/colony/challenge'
-      preLoaderRoute: typeof ApiColonyChallengeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/api/colony/challenge';
+      path: '/api/colony/challenge';
+      fullPath: '/api/colony/challenge';
+      preLoaderRoute: typeof ApiColonyChallengeRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api/colony/join': {
-      id: '/api/colony/join'
-      path: '/api/colony/join'
-      fullPath: '/api/colony/join'
-      preLoaderRoute: typeof ApiColonyJoinRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/api/colony/join';
+      path: '/api/colony/join';
+      fullPath: '/api/colony/join';
+      preLoaderRoute: typeof ApiColonyJoinRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api/colony/me': {
-      id: '/api/colony/me'
-      path: '/api/colony/me'
-      fullPath: '/api/colony/me'
-      preLoaderRoute: typeof ApiColonyMeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/api/colony/me';
+      path: '/api/colony/me';
+      fullPath: '/api/colony/me';
+      preLoaderRoute: typeof ApiColonyMeRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api/colony/propose': {
-      id: '/api/colony/propose'
-      path: '/api/colony/propose'
-      fullPath: '/api/colony/propose'
-      preLoaderRoute: typeof ApiColonyProposeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/api/colony/propose';
+      path: '/api/colony/propose';
+      fullPath: '/api/colony/propose';
+      preLoaderRoute: typeof ApiColonyProposeRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api/colony/reaccept': {
-      id: '/api/colony/reaccept'
-      path: '/api/colony/reaccept'
-      fullPath: '/api/colony/reaccept'
-      preLoaderRoute: typeof ApiColonyReacceptRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/api/colony/reaccept';
+      path: '/api/colony/reaccept';
+      fullPath: '/api/colony/reaccept';
+      preLoaderRoute: typeof ApiColonyReacceptRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api/property/evidence': {
-      id: '/api/property/evidence'
-      path: '/api/property/evidence'
-      fullPath: '/api/property/evidence'
-      preLoaderRoute: typeof ApiPropertyEvidenceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/api/property/evidence';
+      path: '/api/property/evidence';
+      fullPath: '/api/property/evidence';
+      preLoaderRoute: typeof ApiPropertyEvidenceRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api/scans/$id': {
-      id: '/api/scans/$id'
-      path: '/$id'
-      fullPath: '/api/scans/$id'
-      preLoaderRoute: typeof ApiScansIdRouteImport
-      parentRoute: typeof ApiScansRoute
-    }
+      id: '/api/scans/$id';
+      path: '/$id';
+      fullPath: '/api/scans/$id';
+      preLoaderRoute: typeof ApiScansIdRouteImport;
+      parentRoute: typeof ApiScansRoute;
+    };
+    '/api/stall/meal': {
+      id: '/api/stall/meal';
+      path: '/api/stall/meal';
+      fullPath: '/api/stall/meal';
+      preLoaderRoute: typeof ApiStallMealRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/api/stall/webhook': {
+      id: '/api/stall/webhook';
+      path: '/api/stall/webhook';
+      fullPath: '/api/stall/webhook';
+      preLoaderRoute: typeof ApiStallWebhookRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/api/property/evidence/$id': {
-      id: '/api/property/evidence/$id'
-      path: '/$id'
-      fullPath: '/api/property/evidence/$id'
-      preLoaderRoute: typeof ApiPropertyEvidenceIdRouteImport
-      parentRoute: typeof ApiPropertyEvidenceRoute
-    }
+      id: '/api/property/evidence/$id';
+      path: '/$id';
+      fullPath: '/api/property/evidence/$id';
+      preLoaderRoute: typeof ApiPropertyEvidenceIdRouteImport;
+      parentRoute: typeof ApiPropertyEvidenceRoute;
+    };
     '/api/property/meta/$hash': {
-      id: '/api/property/meta/$hash'
-      path: '/api/property/meta/$hash'
-      fullPath: '/api/property/meta/$hash'
-      preLoaderRoute: typeof ApiPropertyMetaHashRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/api/property/meta/$hash';
+      path: '/api/property/meta/$hash';
+      fullPath: '/api/property/meta/$hash';
+      preLoaderRoute: typeof ApiPropertyMetaHashRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
 interface ApiScansRouteChildren {
-  ApiScansIdRoute: typeof ApiScansIdRoute
+  ApiScansIdRoute: typeof ApiScansIdRoute;
 }
 
 const ApiScansRouteChildren: ApiScansRouteChildren = {
   ApiScansIdRoute: ApiScansIdRoute,
-}
+};
 
 const ApiScansRouteWithChildren = ApiScansRoute._addFileChildren(
   ApiScansRouteChildren,
-)
+);
 
 interface ApiPropertyEvidenceRouteChildren {
-  ApiPropertyEvidenceIdRoute: typeof ApiPropertyEvidenceIdRoute
+  ApiPropertyEvidenceIdRoute: typeof ApiPropertyEvidenceIdRoute;
 }
 
 const ApiPropertyEvidenceRouteChildren: ApiPropertyEvidenceRouteChildren = {
   ApiPropertyEvidenceIdRoute: ApiPropertyEvidenceIdRoute,
-}
+};
 
 const ApiPropertyEvidenceRouteWithChildren =
-  ApiPropertyEvidenceRoute._addFileChildren(ApiPropertyEvidenceRouteChildren)
+  ApiPropertyEvidenceRoute._addFileChildren(ApiPropertyEvidenceRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -553,6 +613,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiScansRoute: ApiScansRouteWithChildren,
   ApiTripRouteRoute: ApiTripRouteRoute,
   JoinCreedDotjsonRoute: JoinCreedDotjsonRoute,
+  StallPaidRoute: StallPaidRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiColonyChallengeRoute: ApiColonyChallengeRoute,
   ApiColonyJoinRoute: ApiColonyJoinRoute,
@@ -560,17 +621,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiColonyProposeRoute: ApiColonyProposeRoute,
   ApiColonyReacceptRoute: ApiColonyReacceptRoute,
   ApiPropertyEvidenceRoute: ApiPropertyEvidenceRouteWithChildren,
+  ApiStallMealRoute: ApiStallMealRoute,
+  ApiStallWebhookRoute: ApiStallWebhookRoute,
   ApiPropertyMetaHashRoute: ApiPropertyMetaHashRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
+  ._addFileTypes<FileRouteTypes>();
