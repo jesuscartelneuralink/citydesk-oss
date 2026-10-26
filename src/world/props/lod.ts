@@ -57,7 +57,7 @@ export function lodPlan(items: LodItem[], cam: LodCam, tier: Tier, q: LodQuality
     const it = items[i];
     const d = Math.hypot(it.x - cam.x, it.y - cam.y);
     if (d >= rf) continue;
-    let band: Band = d < rn ? "near" : d < rm ? "mid" : "far";
+    const band: Band = d < rn ? "near" : d < rm ? "mid" : "far";
     if (band === "far" && it.kind !== "tree" && it.kind !== "lamp") continue;
     if (d > 30) {
       // conservative view cone from the camera ground point

@@ -23,7 +23,7 @@ export const workversePlayerState = {
 let pendingWalkTarget: { x: number; z: number } | null = null;
 
 export const virtualThumbstick = { dx: 0, dz: 0 };
-export let virtualActionTriggered = { jump: false, interact: false };
+export const virtualActionTriggered = { jump: false, interact: false };
 
 export function triggerVirtualAction(action: 'jump' | 'interact') {
   if (action === 'jump') virtualActionTriggered.jump = true;

@@ -188,7 +188,7 @@ export function mountRealism(input: unknown): () => void {
 
   // ── sun → light, sky, tints, windows (#5 #6 #8 #16 #28) ────────────────────────
   let glassMode: "night" | "day" | "off" = "off";
-  let windowsOn = false;
+  const windowsOn = false;
   const inspectOn = inspectAllowed(); // NDU-UPG inspect (#04)
   const applySun = () => {
     const { sun, pal } = getRealism();

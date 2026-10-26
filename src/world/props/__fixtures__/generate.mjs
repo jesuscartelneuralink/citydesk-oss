@@ -1,4 +1,4 @@
-// @ts-nocheck — dev helper: regenerates the hand-made Overpass fixtures (run from this folder).
+// Dev helper: regenerates the hand-made Overpass fixtures (run from this folder).
 import fs from "node:fs";
 let id = 1000;
 const M = (lat) => ({ dLat: 1 / 111320, dLng: 1 / (111320 * Math.cos(lat * Math.PI / 180)) });

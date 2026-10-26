@@ -44,10 +44,10 @@ function Loop() {
     camera.updateProjectionMatrix();
     camera.updateMatrixWorld();
     const e = camera.matrixWorld.elements;
-    let fx = -e[8];
-    let fz = -e[10];
-    let rx = e[0];
-    let rz = e[2];
+    const fx = -e[8];
+    const fz = -e[10];
+    const rx = e[0];
+    const rz = e[2];
     const fl = Math.hypot(fx, fz) || 1;
     const rl = Math.hypot(rx, rz) || 1;
     basis.fx = fx / fl;

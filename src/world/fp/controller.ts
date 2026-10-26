@@ -98,14 +98,14 @@ export function attachFirstPerson(map: MapLibreMap, player: MapLibreMarker, _ml?
   let lastSpeed = 0;
   let turnHeld = 0;
   let zoomScale: number | null = null;
-  let lastCam = { cx: 0, cy: 0, z: 0, p: 0, b: 0, e: 0, r: 0, f: 0 };
+  const lastCam = { cx: 0, cy: 0, z: 0, p: 0, b: 0, e: 0, r: 0, f: 0 };
   const gyroYawF = new OneEuro();
   const gyroPitchF = new OneEuro();
   let gyroPrevYaw: number | null = null;
   let spatial: SpatialBus | null = null;
   let actors: FpActor[] = [];
   let saved: { minPitch: number; maxPitch: number; maxZoom: number; clamp: boolean | undefined; fov: number; sky: unknown; dragPan: boolean; scroll: boolean; touch: boolean; keyboard: boolean; dblclick: boolean } | null = null;
-  let detachLook: Array<() => void> = [];
+  const detachLook: Array<() => void> = [];
   let quiet = 0; // >0 while our own setters run: their synchronous movestart events are not external moves
   const hush = <T,>(fn: () => T): T => {
     quiet += 1;

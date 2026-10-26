@@ -55,16 +55,11 @@ jobs:
       - name: Lint (tests/)
         run: npx eslint tests
 
-      # Whole-repo lint and the template unit tests are RED on the baseline commit (e992e2b):
-      # 7 prefer-const/no-empty errors in src/game/* + src/lib/app-data/client.server.ts, and 13
-      # template self-tests that assume auth is off (this app ships auth on). See docs/qa/0010-dryrun.md.
-      # Reported but non-blocking until those are fixed; flip continue-on-error to false then.
-      - name: Lint (whole repo, baseline known-red)
-        continue-on-error: true
+      # Whole-repo lint and npm test are blocking. The old baseline errors are fixed.
+      - name: Lint (whole repo)
         run: npm run lint
 
-      - name: Unit tests (npm test, baseline known-red)
-        continue-on-error: true
+      - name: Unit tests (npm test)
         run: npm test
 
       # Colony work system P0/P1: ledger, 1-cent rule, kill switch, watch-only addresses, audit, and the
