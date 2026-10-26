@@ -18,7 +18,9 @@ let canvas = false;
 try {
   await page.waitForSelector("canvas", { timeout: 170_000 });
   canvas = true;
-} catch {}
+} catch {
+  canvas = false;
+}
 await page.waitForTimeout(8000);
 await page.screenshot({ path: out });
 const ok = res?.status() === 200 && canvas && !errors.length && !cspInline.length;

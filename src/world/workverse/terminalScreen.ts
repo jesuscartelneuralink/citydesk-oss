@@ -285,7 +285,8 @@ export interface AnsiSpan {
   underline?: boolean;
 }
 
-const ANSI_REGEX = /\x1b\[([0-9;]*)m/g;
+// eslint-disable-next-line no-control-regex -- ANSI CSI sequences start with ESC
+const ANSI_REGEX = new RegExp("\\x1b\\[([0-9;]*)m", "g");
 
 /** Strip all ANSI escape sequences from a string */
 export function stripAnsi(text: string): string {
@@ -730,9 +731,8 @@ export function drawScreensaver(
   const pillH = 32;
 
   ctx.fillStyle = "rgba(255, 255, 255, 0.06)";
-  ctx.roundRect
-    ? ctx.roundRect(TERMINAL_W / 2 - pillW / 2, centerY + 30, pillW, pillH, 16)
-    : ctx.fillRect(TERMINAL_W / 2 - pillW / 2, centerY + 30, pillW, pillH);
+  if (ctx.roundRect) ctx.roundRect(TERMINAL_W / 2 - pillW / 2, centerY + 30, pillW, pillH, 16);
+  else ctx.fillRect(TERMINAL_W / 2 - pillW / 2, centerY + 30, pillW, pillH);
   ctx.fill();
 
   ctx.fillStyle = palette.inkMuted;

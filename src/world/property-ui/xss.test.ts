@@ -24,7 +24,8 @@ test("cleanLabel: XSS fixtures survive as literal text (never stripped of the pa
     // cleanLabel only strips control chars; the markup characters are printable
     // (code 60/62/58/34 > 31), so the payload survives untouched as a string.
     // React escapes it at render (JSX text node) — it is inert literal text.
-    assert.ok(!/[\x00-\x1f\x7f]/.test(out), `${f}: no control characters`);
+    // eslint-disable-next-line no-control-regex -- the cleaner must drop C0 controls
+    assert.ok(!new RegExp("[\\x00-\\x1f\\x7f]").test(out), `${f}: no control characters`);
     assert.equal(typeof out, "string");
   }
   // spot-check that the markup characters are genuinely preserved (not escaped
