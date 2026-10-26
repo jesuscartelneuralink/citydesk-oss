@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSim } from "@/game/useSim";
-import { earnVouchers, payVouchers } from "@/game/sim";
+import { eatPaidPlate, earnVouchers, payVouchers } from "@/game/sim";
 import { ReportButton } from "@/world/moderation/ReportButton"; // NDU-UPG 909
 import { list as moderationList } from "@/world/moderation/store";
 import { getBots } from "@/world/robotLife";
@@ -71,6 +71,8 @@ export function PhoneSheet({
   const [met, setMet] = useState<Met[]>([]);
   const [installed, setInstalled] = useState<AppId[]>(["messages", "places"]);
   const [stallNote, setStallNote] = useState("");
+  const [crypto, setCrypto] = useState<{ reference: string; url: string; address: string } | null>(null);
+  const [sig, setSig] = useState("");
   const now = new Date();
   const nearby = new Set(neighbors.map((person) => person.id));
 
@@ -189,7 +191,12 @@ export function PhoneSheet({
                       className="bg-accent text-bg min-h-11 rounded-full px-3 text-xs font-semibold"
                       onClick={() => {
                         setStallNote("Opening the till…");
-                        void fetch("/api/stall/meal", { method: "POST", credentials: "include" })
+                        void fetch("/api/stall/meal", {
+                          method: "POST",
+                          credentials: "include",
+                          headers: { "content-type": "application/json" },
+                          body: "{}",
+                        })
                           .then((res) => res.json())
                           .then((body: { url?: string; error?: string }) => {
                             if (body.url) window.location.assign(body.url);
@@ -200,6 +207,65 @@ export function PhoneSheet({
                     >
                       Pay ₦1,500 for a plate
                     </button>
+                    <button
+                      type="button"
+                      className="ml-2 min-h-11 rounded-full px-3 text-xs font-semibold underline"
+                      onClick={() => {
+                        setStallNote("Opening the USDC till…");
+                        void fetch("/api/stall/crypto", {
+                          method: "POST",
+                          credentials: "include",
+                          headers: { "content-type": "application/json" },
+                          body: "{}",
+                        })
+                          .then((res) => res.json())
+                          .then((body: { url?: string; address?: string; reference?: string; error?: string }) => {
+                            if (body.url && body.address && body.reference) {
+                              setCrypto({ url: body.url, address: body.address, reference: body.reference });
+                              setStallNote("Send exactly 1 USDC, then paste the signature.");
+                            } else setStallNote(body.error || "The crypto till did not open.");
+                          })
+                          .catch(() => setStallNote("The crypto till could not be reached."));
+                      }}
+                    >
+                      Pay 1 USDC
+                    </button>
+                    {crypto ? (
+                      <div className="mt-2 space-y-2">
+                        <a className="block text-xs underline" href={crypto.url}>
+                          Open a wallet for {crypto.address.slice(0, 4)}…{crypto.address.slice(-4)}
+                        </a>
+                        <input
+                          value={sig}
+                          onChange={(event) => setSig(event.target.value)}
+                          placeholder="Transaction signature"
+                          className="bg-surface w-full rounded-xl px-2 py-2 text-xs"
+                        />
+                        <button
+                          type="button"
+                          className="min-h-11 rounded-full px-3 text-xs font-semibold underline"
+                          onClick={() => {
+                            void fetch("/api/stall/crypto", {
+                              method: "POST",
+                              credentials: "include",
+                              headers: { "content-type": "application/json" },
+                              body: JSON.stringify({ reference: crypto.reference, signature: sig }),
+                            })
+                              .then((res) => res.json())
+                              .then((body: { paid?: boolean; error?: string }) => {
+                                if (body.paid) {
+                                  eatPaidPlate();
+                                  setStallNote("Paid. 1 USDC went to the stall.");
+                                  setCrypto(null);
+                                } else setStallNote(body.error || "Not paid yet.");
+                              })
+                              .catch(() => setStallNote("The chain could not be read."));
+                          }}
+                        >
+                          Confirm the USDC payment
+                        </button>
+                      </div>
+                    ) : null}
                     {stallNote ? <p className="text-muted mt-1 text-xs">{stallNote}</p> : null}
                   </div>
                 ) : null}
