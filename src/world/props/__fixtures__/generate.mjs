@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Dev helper: regenerates the hand-made Overpass fixtures (run from this folder).
 import fs from "node:fs";
 let id = 1000;

@@ -69,6 +69,7 @@ export function PhoneSheet({
   const snap = useSim();
   const [page, setPage] = useState<"home" | AppId | "store">("home");
   const [met, setMet] = useState<Met[]>([]);
+  const [installed, setInstalled] = useState<AppId[]>(["messages", "places"]);
   const [stallNote, setStallNote] = useState("");
   const now = new Date();
   const nearby = new Set(neighbors.map((person) => person.id));
